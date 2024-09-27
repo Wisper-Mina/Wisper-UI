@@ -1,75 +1,60 @@
-/**
- * This file specifies how to run the `SudokuZkApp` smart contract locally using the `Mina.LocalBlockchain()` method.
- * The `Mina.LocalBlockchain()` method specifies a ledger of accounts and contains logic for updating the ledger.
- *
- * Please note that this deployment is local and does not deploy to a live network.
- * If you wish to deploy to a live network, please use the zkapp-cli to deploy.
- *
- * To run locally:
- * Build the project: `$ npm run build`
- * Run with node:     `$ node build/src/run.js`.
- */
-import { Sudoku, SudokuZkApp } from './sudoku.js';
-import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
-import { AccountUpdate, Mina, PrivateKey } from 'o1js';
+import { assert, CanonicalForeignField, ZkProgram } from 'o1js';
+import { ECDHSecp256k1, Secp256k1Curve } from './ecdh-scp256k1/ecdh-secp256k1.js';
 
-// setup
-const Local = await Mina.LocalBlockchain();
-Mina.setActiveInstance(Local);
-
-const sender = Local.testAccounts[0];
-const senderKey = sender.key;
-const sudoku = generateSudoku(0.5);
-const zkAppPrivateKey = PrivateKey.random();
-const zkAppAddress = zkAppPrivateKey.toPublicKey();
-// create an instance of the smart contract
-const zkApp = new SudokuZkApp(zkAppAddress);
-
-console.log('Deploying and initializing Sudoku...');
-await SudokuZkApp.compile();
-let tx = await Mina.transaction(sender, async () => {
-  AccountUpdate.fundNewAccount(sender);
-  await zkApp.deploy();
-  await zkApp.update(Sudoku.from(sudoku));
+let ecdhVerificationProgram = ZkProgram({
+    name: 'ecdh-secp256k1-verification',
+    publicOutput: Secp256k1Curve,
+    methods: {
+        verifyECDHSecp256k1: {
+            privateInputs: [Secp256k1Curve.Scalar.Canonical, Secp256k1Curve],
+            async method(
+                userPrivateKey: CanonicalForeignField,
+                peersPublicKey: Secp256k1Curve,
+            ) {
+                return ECDHSecp256k1.computeSharedSecret(userPrivateKey, peersPublicKey);
+            },
+        },
+    },
 });
-await tx.prove();
-/**
- * note: this tx needs to be signed with `tx.sign()`, because `deploy` uses `requireSignature()` under the hood,
- * so one of the account updates in this tx has to be authorized with a signature (vs proof).
- * this is necessary for the deploy tx because the initial permissions for all account fields are "signature".
- * (but `deploy()` changes some of those permissions to "proof" and adds the verification key that enables proofs.
- * that's why we don't need `tx.sign()` for the later transactions.)
- */
-await tx.sign([zkAppPrivateKey, senderKey]).send();
 
-console.log('Is the sudoku solved?', zkApp.isSolved.get().toBoolean());
+let { verifyECDHSecp256k1 } = await ecdhVerificationProgram.analyzeMethods();
 
-let solution = solveSudoku(sudoku);
-if (solution === undefined) throw Error('cannot happen');
+console.log(verifyECDHSecp256k1.summary());
 
-// submit a wrong solution
-let noSolution = cloneSudoku(solution);
-noSolution[0][0] = (noSolution[0][0] % 9) + 1;
+console.time('compile');
+const forceRecompile = false;
+await ecdhVerificationProgram.compile({ forceRecompile });
+console.timeEnd('compile');
 
-console.log('Submitting wrong solution...');
-try {
-  let tx = await Mina.transaction(sender, async () => {
-    await zkApp.submitSolution(Sudoku.from(sudoku), Sudoku.from(noSolution));
-  });
-  await tx.prove();
-  await tx.sign([senderKey]).send();
-} catch {
-  console.log('There was an error submitting the solution, as expected');
-}
+console.time('generate ECDH keys');
+const ecdhInstance = new ECDHSecp256k1();
+const { privateKey: alicePrivateKey, publicKey: alicePublicKey } = ecdhInstance.generateKey();
+const { privateKey: bobPrivateKey, publicKey: bobPublicKey } = ecdhInstance.generateKey();
+console.timeEnd('generate ECDH keys');
 
-console.log('Is the sudoku solved?', zkApp.isSolved.get().toBoolean());
+console.time('prove Alice');
+let proofAlice = await ecdhVerificationProgram.verifyECDHSecp256k1(alicePrivateKey, bobPublicKey);
+console.timeEnd('prove Alice');
 
-// submit the actual solution
-console.log('Submitting solution...');
-tx = await Mina.transaction(sender, async () => {
-  await zkApp.submitSolution(Sudoku.from(sudoku), Sudoku.from(solution!));
-});
-await tx.prove();
-await tx.sign([senderKey]).send();
+console.time('prove Bob');
+let proofBob = await ecdhVerificationProgram.verifyECDHSecp256k1(bobPrivateKey, alicePublicKey);
+console.timeEnd('prove Bob');
 
-console.log('Is the sudoku solved?', zkApp.isSolved.get().toBoolean());
+
+console.time('compare Alice & Bob secret shares')
+console.log(proofAlice.publicOutput.toBigint())
+console.log(proofBob.publicOutput.toBigint())
+console.timeEnd('compare Alice & Bob secret shares')
+
+
+console.time('verify Alice');
+let isVerifiedAlice = await ecdhVerificationProgram.verify(proofAlice);
+console.timeEnd('verify Alice');
+
+
+console.time('verify Bob');
+let isVerifiedBob = await ecdhVerificationProgram.verify(proofBob);
+console.timeEnd('verify Bob');
+
+console.log(`Proof verified Alice: ${isVerifiedAlice}`);
+console.log(`Proof verified Bob: ${isVerifiedBob}`);
