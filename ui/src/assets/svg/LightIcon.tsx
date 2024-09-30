@@ -7,7 +7,6 @@ export const LightIcon: React.FC<CustomProp> = ({ size = 22, ...props }) => (
     width={size}
     height={size}
     fill="none"
-    className="hover:opacity-80"
     {...props}
   >
     <path

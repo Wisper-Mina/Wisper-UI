@@ -7,8 +7,16 @@ import { WalletIcon } from "@/assets/svg/WalletIcon";
 export const ConnectWallet = () => {
   const { theme } = useTheme();
 
+  const handleConnect = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    console.log("Connect Wallet");
+  };
+
   return (
-    <div className="py-3 font-sora rounded-full bg-secondary px-5 flex items-center justify-between w-[335px] mobile:w-fit">
+    <div
+      onClick={handleConnect}
+      className="py-3 cursor-pointer hover:bg-primary transition-all font-sora rounded-full bg-secondary px-5 flex items-center justify-between w-[335px] mobile:w-fit"
+    >
       <div className="flex items-center gap-x-3">
         <WalletIcon />
         <p className="text-base dark:text-black text-white">Connect Wallet</p>

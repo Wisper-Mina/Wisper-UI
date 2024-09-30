@@ -12,6 +12,7 @@ const config: Config = {
         "light-bg": "#FFFDFD",
         "dark-bg": "#212121",
         "light-text-primary": "#24252A",
+        primary: "#DBC9FF",
         secondary: "#CEB4FF",
       },
       fontFamily: {

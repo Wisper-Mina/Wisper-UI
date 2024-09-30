@@ -12,7 +12,7 @@ export const ToggleTheme = () => {
   };
 
   return (
-    <button onClick={toggleTheme}>
+    <button onClick={toggleTheme} className="hover:scale-110 transition-all">
       {theme === "dark" ? <DarkIcon /> : <LightIcon />}
     </button>
   );

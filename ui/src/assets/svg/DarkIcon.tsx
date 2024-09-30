@@ -7,7 +7,6 @@ export const DarkIcon: React.FC<CustomProp> = ({ size = 20, ...props }) => (
     width={size}
     height={size}
     fill="none"
-    className="hover:opacity-80"
     {...props}
   >
     <path
