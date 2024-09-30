@@ -29,7 +29,7 @@ class PrivateInputs extends Struct({
 }) {}
 
 
-const MessageVerificationProgram = ZkProgram({
+export const MessageVerificationProgram = ZkProgram({
   name: 'MessageVerification',
   publicInput: MessageProof,
   privateInput: PrivateInputs,
@@ -45,9 +45,9 @@ const MessageVerificationProgram = ZkProgram({
           publicInput.messageHash.toFields()
         );
         isSignatureValid.assertTrue();
-
+        const messageSignatureFields = privateInput.messageSignature.toFields();
         // Verify the Merkle path
-        const calculatedRoot = privateInput.merklePath.calculateRoot(publicInput.messageHash);
+        const calculatedRoot = privateInput.merklePath.calculateRoot(Poseidon.hash(messageSignatureFields));
         calculatedRoot.assertEquals(publicInput.merkleRoot);
 
         // Verify that the sequence number is greater than the previous one
@@ -62,7 +62,7 @@ const MessageVerificationProgram = ZkProgram({
 
 
 
-async function generateProof(
+export async function generateProof(
   senderPublicKey: PublicKey,
   messageHash: Field,
   messageSignature: Signature,
@@ -94,9 +94,15 @@ async function generateProof(
 
   return proof;
 }
+
+
+//Example 
 await MessageVerificationProgram.compile();
+
+// chatting key pairs
 const senderPrivateKey = PrivateKey.random();
 const senderPublicKey = senderPrivateKey.toPublicKey(); 
+
 const pureMessage = "Message itsel!!"
 const message = pureMessage.split('').map(char => Field(char.charCodeAt(0)));
 const messageHash = Poseidon.hash(message);
@@ -104,9 +110,10 @@ const messageSignature = Signature.create(
   senderPrivateKey,
     messageHash.toFields()
 );
+const messageSignatureFields = messageSignature.toFields();
 
 const merkleTree = new MerkleTree(MERKLE_TREE_HEIGHT);
-merkleTree.setLeaf(0n, messageHash);
+merkleTree.setLeaf(0n, Poseidon.hash(messageSignatureFields));
 
 const sequenceNumber = UInt64.from(1);
 const previousSequenceNumber = UInt64.from(0);
