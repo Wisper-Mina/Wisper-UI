@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { EncryptedData } from './interfaces/message.interface';
+import { EncryptedData } from '../interfaces/message.interface';
 import { ForeignCurveV2 } from "o1js";
 
 // Function to derive a key from ForeignCurveV2
