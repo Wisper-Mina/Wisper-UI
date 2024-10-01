@@ -7,11 +7,11 @@ import { ConnectWallet } from "./ConnectWallet";
 
 const HomePage = () => {
   return (
-    <div className="h-screen w-full relative">
+    <div className="h-screen w-full relative overflow-hidden">
       <div className="absolute z-30 left-[50px] top-[54px]">
         <MainLogo />
       </div>
-      <div className="absolute z-40 right-[50px] flex items-center gap-x-6 top-[54px] ">
+      <div className="absolute z-40 right-[50px] flex items-center gap-x-3 top-[54px] ">
         <ToggleTheme />
         <Navigation />
       </div>
