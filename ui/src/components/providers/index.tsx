@@ -1,7 +1,9 @@
 "use client";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { Provider } from "react-redux";
 
 import { useMounted } from "@/hooks/useMounted";
+import { store } from "@/redux/store";
 
 const MainProvider = ({ children }: { children: React.ReactNode }) => {
   const mounted = useMounted();
@@ -9,7 +11,7 @@ const MainProvider = ({ children }: { children: React.ReactNode }) => {
   if (!mounted) return null;
   return (
     <NextThemesProvider attribute="class" defaultTheme="dark">
-      {children}
+      <Provider store={store}>{children}</Provider>
     </NextThemesProvider>
   );
 };

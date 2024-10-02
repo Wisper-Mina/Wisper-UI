@@ -3,13 +3,16 @@ import { useTheme } from "next-themes";
 
 import { RightArrowIcon } from "@/assets/svg/RightArrowIcon";
 import { WalletIcon } from "@/assets/svg/WalletIcon";
+import { useConnectWallet } from "@/hooks/useConnectWallet";
 
 export const ConnectWallet = () => {
   const { theme } = useTheme();
 
+  const { handleConnectWallet } = useConnectWallet();
+
   const handleConnect = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    console.log("Connect Wallet");
+    handleConnectWallet();
   };
 
   return (
