@@ -4,7 +4,7 @@ import { useGetChat } from "@/hooks/useGetChat";
 import { usePageWidth } from "@/hooks/usePageWidth";
 import DesktopView from "./DesktopView";
 
-export const ChatLayout = () => {
+export const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   const pageWidth = usePageWidth();
 
   const { loading, chat } = useGetChat();
@@ -18,7 +18,7 @@ export const ChatLayout = () => {
   }
 
   if (pageWidth > 700) {
-    return <DesktopView chat={chat} />;
+    return <DesktopView chat={chat}>{children}</DesktopView>;
   }
   return <div>ChatLayout</div>;
 };
