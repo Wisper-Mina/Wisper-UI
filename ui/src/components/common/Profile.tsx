@@ -2,15 +2,17 @@ import { useState } from "react";
 
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { DownIcon } from "@/assets/svg/DownIcon";
-import { useAppSelector } from "@/types/state";
+import { useAppDispatch, useAppSelector } from "@/types/state";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 
 import SignOutIcon from "@/assets/svg/signout.svg";
 import { SettingsIcon } from "@/assets/svg/SettingsIcon";
 import { DarkIcon } from "@/assets/svg/DarkIcon";
 import { LightIcon } from "@/assets/svg/LightIcon";
+import { deletePublicKeyCookie } from "@/redux/slices/zkApp/thunk";
 
 export const Profile = () => {
   const { image } = useAppSelector((state) => state.zkApp);
@@ -45,9 +47,22 @@ const ProfileDropdown = () => {
 
   const { theme, setTheme } = useTheme();
 
+  const dispatch = useAppDispatch();
+
+  const router = useRouter();
+
   const toggleTheme = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
     setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const signout = () => {
+    dispatch(deletePublicKeyCookie());
+    router.push("/home");
+  };
+
+  const handleProfileSettings = () => {
+    //TODO: handle profile settings
   };
 
   const darkMode = {
@@ -72,12 +87,15 @@ const ProfileDropdown = () => {
         <p className="text-xs font-bold">
           {publicKeyBase58?.slice(0, 16) + "..." + publicKeyBase58?.slice(-6)}
         </p>
-        <button className="flex items-center gap-x-1">
+        <button onClick={signout} className="flex items-center gap-x-1">
           <span className="text-dark-grey font-bold text-xs">Sign Out</span>
           <Image src={SignOutIcon} alt="sign out" width={12} height={12} />
         </button>
       </div>
-      <div className="px-5 py-3 flex items-center gap-x-1 border-b border-light-grey">
+      <div
+        onClick={handleProfileSettings}
+        className="px-5 py-3 flex items-center gap-x-1 border-b border-light-grey"
+      >
         <SettingsIcon theme={theme} size={20} />
         <span className="font-semibold text-sm">Profile Settings</span>
       </div>

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import ZkappWorkerClient from "@/lib/zkAppWorkerClient";
-import { setPublicKeyCookie } from "./thunk";
+import { deletePublicKeyCookie, setPublicKeyCookie } from "./thunk";
 import { ImageType } from "@/types/messages";
 
 export interface ZkAppState {
@@ -42,11 +42,15 @@ export const zkAppSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(setPublicKeyCookie.fulfilled, (state, action) => {
-      state.publicKeyBase58 = action.payload
-        ? action.payload.publicKeyBase58
-        : null;
-    });
+    builder
+      .addCase(setPublicKeyCookie.fulfilled, (state, action) => {
+        state.publicKeyBase58 = action.payload
+          ? action.payload.publicKeyBase58
+          : null;
+      })
+      .addCase(deletePublicKeyCookie.fulfilled, (state) => {
+        state.publicKeyBase58 = null;
+      });
   },
 });
 

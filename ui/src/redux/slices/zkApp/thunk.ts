@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { PublicKey } from "o1js";
 
 export const setPublicKeyCookie = createAsyncThunk(
   "session/setSessionCookie",
@@ -21,6 +20,21 @@ export const setPublicKeyCookie = createAsyncThunk(
         return data;
       }
       return rejectWithValue("Failed to set session cookie");
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const deletePublicKeyCookie = createAsyncThunk(
+  "session/deleteSession",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("/api/cookie/delete");
+      if (response.status === 200) {
+        return null;
+      }
+      return rejectWithValue("Failed to delete session");
     } catch (error) {
       return rejectWithValue(error);
     }
