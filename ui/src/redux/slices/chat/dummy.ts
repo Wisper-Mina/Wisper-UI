@@ -82,6 +82,12 @@ export const dummyChat: ChatResponse = {
           content: "I'll handle, the backend",
           isMine: true,
         },
+        {
+          id: "18",
+          time: "12:01",
+          content: "how would it work?",
+          isMine: false,
+        },
       ],
     },
   ],

@@ -3,6 +3,7 @@ import { CustomProp } from "./type";
 
 export const SettingsIcon: React.FC<CustomProp> = ({
   theme = "light",
+  size = 24,
   ...props
 }) => (
   <svg
@@ -10,6 +11,9 @@ export const SettingsIcon: React.FC<CustomProp> = ({
     width={24}
     height={24}
     fill="none"
+    style={{
+      scale: size / 24,
+    }}
     {...props}
   >
     <path

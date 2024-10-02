@@ -15,7 +15,7 @@ export const Top = ({ id, chatWith, username, image }: TopProps) => {
   const handleSettings = () => {};
 
   return (
-    <div className="bg-[#F0E8FF] py-5 px-9">
+    <div className="bg-[#F0E8FF] dark:bg-[#151515] py-5 px-9">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-x-3">
           <Image
@@ -30,12 +30,12 @@ export const Top = ({ id, chatWith, username, image }: TopProps) => {
             }`}
           >
             {username && (
-              <p className="font-semibold text-light-text-secondary text-base">
+              <p className="font-semibold text-light-text-secondary dark:text-white text-base">
                 {username}
               </p>
             )}
             <p
-              className={` font-semibold  text-light-chats-text text-xs ${
+              className={` font-semibold  text-light-chats-text dark:text-white text-xs ${
                 username ? "text-opacity-60" : ""
               }`}
             >

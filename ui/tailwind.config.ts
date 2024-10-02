@@ -23,6 +23,9 @@ const config: Config = {
         "light-input-border": "#DAC8FF",
         "light-sender-bg": "#EDE4FF",
         "light-receiver-bg": "#C6ADF8",
+        "dark-grey": "#9C9C9C",
+        "light-grey": "#F4F5F6",
+        purple: "#7388FC",
       },
       fontFamily: {
         sora: ["Sora", "sans-serif"],

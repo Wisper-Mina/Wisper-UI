@@ -1,6 +1,7 @@
-import HomePage from "@/components/pages/Home";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+import HomePage from "@/components/pages/Home";
 
 const Home = () => {
   const publicKey = cookies().get("publicKey");

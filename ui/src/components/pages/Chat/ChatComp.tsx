@@ -21,9 +21,9 @@ export const ChatComp = ({ chat }: ChatCompProps) => {
   return (
     <div
       onClick={handleChatClick}
-      className={`p-4 cursor-pointer border-b border-secondary hover:bg-primary transition-all flex font-sora items-center gap-x-3 ${
+      className={`p-4 cursor-pointer border-secondary hover:bg-primary dark:bg-opacity-60 transition-all flex font-sora items-center gap-x-3 ${
         chat?.isSelected ? "bg-primary" : ""
-      } ${chat?.isLastChat ? "border-b-0" : ""}`}
+      } ${chat?.isLastChat ? "border-b-0" : "border-b"}`}
     >
       <Image
         alt="user"
@@ -32,22 +32,22 @@ export const ChatComp = ({ chat }: ChatCompProps) => {
         height={48}
       />
       <div className="h-12 flex-1 py-1 flex flex-col justify-between">
-        <p className="font-semibold text-light-chats-text text-base">
+        <p className="font-semibold text-light-chats-text dark:text-white text-base">
           {chat.username
             ? chat.username
             : chat?.chatWith?.slice(0, 12) + "..." + chat?.chatWith?.slice(-6)}
         </p>
-        <p className="truncate font-semibold max-w-[250px] text-opacity-60 text-light-chats-text text-xs">
+        <p className="truncate font-semibold max-w-[250px] text-opacity-60 text-light-chats-text dark:text-white text-xs">
           {chat.lastMessage?.content}
         </p>
       </div>
       <div className="h-12 py-1 flex flex-col items-end justify-between">
-        <p className="font-medium text-opacity-60 text-light-chats-text text-[10px]">
+        <p className="font-medium text-opacity-60 text-light-chats-text dark:text-light-grey text-[10px]">
           {chat.lastMessage?.time}
         </p>
         {chat?.unReadMessages > 0 && (
-          <div className="min-w-4 min-h-4 w-4 h-4 flex items-center justify-center rounded-full bg-light-chats-unread">
-            <span className="text-white text-[10px] font-medium">
+          <div className="min-w-4 min-h-4 w-4 h-4 flex items-center justify-center rounded-full bg-light-chats-unread dark:bg-secondary">
+            <span className="text-white dark:text-black text-[10px] font-medium">
               {chat.unReadMessages}
             </span>
           </div>

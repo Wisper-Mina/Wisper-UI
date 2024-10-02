@@ -2,6 +2,7 @@ import { MainLogo } from "@/components/common/MainLogo";
 import { ChatResponse } from "@/types/messages";
 import { FC } from "react";
 import { Chats } from "./Chats";
+import { Profile } from "@/components/common/Profile";
 
 interface DesktopViewProps {
   chat: ChatResponse;
@@ -10,11 +11,12 @@ interface DesktopViewProps {
 
 const DesktopView: FC<DesktopViewProps> = ({ chat, children }) => {
   return (
-    <div className="w-full h-screen overflow-hidden">
-      <div className="fixed top-[54px] left-[50px]">
+    <div className="w-full h-screen overflow-hidden pt-[50px]">
+      <div className="flex items-center justify-between px-[50px]">
         <MainLogo />
+        <Profile />
       </div>
-      <div className="grid grid-cols-16 px-8 gap-x-8 pt-[100px] pb-[46px] h-full">
+      <div className="grid grid-cols-16 px-8 gap-x-8 pt-[16px] pb-[50px] h-full">
         <Chats chats={chat?.chats} />
         {children}
       </div>

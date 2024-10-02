@@ -5,7 +5,7 @@ import { ChatInput } from "./ChatInput";
 
 const ChatDesktop = ({ chat }: { chat: ChatType }) => {
   return (
-    <div className="col-span-11 bg-light-chats-bg overflow-hidden h-full rounded-[28px] relative">
+    <div className="col-span-11 bg-light-chats-bg dark:bg-dark-chats-bg overflow-hidden h-full rounded-[28px] relative">
       <Top
         id={chat?.id}
         chatWith={chat?.chatWith}

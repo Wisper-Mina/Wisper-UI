@@ -13,7 +13,7 @@ export const Chats = ({ chats }: ChatsProps) => {
   const chat_id = params?.chat_id;
 
   return (
-    <div className="col-span-5 py-5 bg-light-chats-bg rounded-[28px] overflow-hidden">
+    <div className="col-span-5 py-5 bg-light-chats-bg dark:bg-dark-chats-bg rounded-[28px] overflow-hidden">
       <ChatsTop />
       <div className="flex flex-col overflow-auto mt-8 max-h-full">
         {chats.map((chat, index) => (
