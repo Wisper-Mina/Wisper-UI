@@ -21,7 +21,7 @@ const ChatDesktop = ({ chat }: { chat: ChatType }) => {
             setIsSettingsOpen={setIsSettingsOpen}
           />
           <Messages messages={chat?.messages} />
-          <ChatInput />
+          <ChatInput chatWith={chat?.chatWith} />
         </>
       )}
       {isSettingsOpen && (

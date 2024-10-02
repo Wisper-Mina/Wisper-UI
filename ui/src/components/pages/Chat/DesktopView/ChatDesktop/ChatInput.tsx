@@ -3,13 +3,20 @@ import React, { useState } from "react";
 import { useTheme } from "next-themes";
 
 import { UpIcon } from "@/assets/svg/UpIcon";
+import { useAppDispatch } from "@/types/state";
+import { setNewMessage } from "@/redux/slices/chat/slice";
 
-export const ChatInput = () => {
+export const ChatInput = ({ chatWith }: { chatWith: string }) => {
   const [message, setMessage] = useState<string>("");
+
+  const dispatch = useAppDispatch();
 
   const { theme } = useTheme();
 
-  const sendMessage = () => {};
+  const sendMessage = () => {
+    dispatch(setNewMessage({ chatWith, newMessage: message }));
+    setMessage("");
+  };
 
   return (
     <div className="absolute left-3 right-3 bottom-[18px] flex items-center gap-x-2">
