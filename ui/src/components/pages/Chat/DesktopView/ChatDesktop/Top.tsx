@@ -8,11 +8,22 @@ interface TopProps {
   chatWith: string;
   username: string | null;
   image: string;
+  isSettingsOpen: boolean;
+  setIsSettingsOpen: (value: boolean) => void;
 }
-export const Top = ({ id, chatWith, username, image }: TopProps) => {
+export const Top = ({
+  id,
+  chatWith,
+  username,
+  image,
+  isSettingsOpen,
+  setIsSettingsOpen,
+}: TopProps) => {
   const { theme } = useTheme();
 
-  const handleSettings = () => {};
+  const handleSettings = () => {
+    setIsSettingsOpen(!isSettingsOpen);
+  };
 
   return (
     <div className="bg-[#F0E8FF] dark:bg-[#151515] py-5 px-9">
