@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { useMounted } from "@/hooks/useMounted";
 import { store } from "@/redux/store";
 import { SessionProvider } from "./SessionProvider";
+import { Overlay } from "./Overlay";
 
 const MainProvider = ({
   children,
@@ -20,7 +21,10 @@ const MainProvider = ({
   return (
     <NextThemesProvider attribute="class" defaultTheme="dark">
       <Provider store={store}>
-        <SessionProvider publicKey={publicKey}>{children}</SessionProvider>
+        <SessionProvider publicKey={publicKey}>
+          <Overlay />
+          {children}
+        </SessionProvider>
       </Provider>
     </NextThemesProvider>
   );

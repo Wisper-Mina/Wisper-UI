@@ -13,22 +13,29 @@ import { SettingsIcon } from "@/assets/svg/SettingsIcon";
 import { DarkIcon } from "@/assets/svg/DarkIcon";
 import { LightIcon } from "@/assets/svg/LightIcon";
 import { deletePublicKeyCookie } from "@/redux/slices/zkApp/thunk";
+import { closeOverlay, openOverlay } from "@/redux/slices/overlaySlice";
 
 export const Profile = () => {
   const { image } = useAppSelector((state) => state.zkApp);
 
   const { theme } = useTheme();
 
+  const dispatch = useAppDispatch();
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const closeDropdown = () => {
     setIsOpen(false);
+    dispatch(closeOverlay());
   };
 
   const ref = useOutsideClick(closeDropdown);
 
   const handleDropdown = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev) => {
+      dispatch(openOverlay());
+      return !prev;
+    });
   };
 
   return (
