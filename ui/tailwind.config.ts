@@ -14,6 +14,10 @@ const config: Config = {
         "light-text-primary": "#24252A",
         primary: "#DBC9FF",
         secondary: "#CEB4FF",
+        "light-chats-bg": "#F6F1FF",
+        "dark-chats-bg": "#1C1C1C",
+        "light-chats-text": "#111827",
+        "light-chats-unread": "#483769",
       },
       fontFamily: {
         sora: ["Sora", "sans-serif"],
@@ -24,6 +28,9 @@ const config: Config = {
       desktop: "1200px",
       mobile: "700px",
       tablet: "870px",
+    },
+    gridTemplateColumns: {
+      "16": "repeat(16, minmax(0, 1fr))",
     },
   },
   darkMode: "class",

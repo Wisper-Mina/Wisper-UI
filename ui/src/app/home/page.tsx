@@ -6,7 +6,7 @@ const Home = () => {
   const publicKey = cookies().get("publicKey");
 
   if (publicKey) {
-    redirect("/messages");
+    redirect("/chat");
   }
   return <HomePage />;
 };
