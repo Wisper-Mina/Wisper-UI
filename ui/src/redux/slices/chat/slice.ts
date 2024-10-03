@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -52,12 +54,16 @@ export const chatSlice = createSlice({
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         const id = chat.messages.length + 1;
-        chat?.messages.push({
+        const { timeStr, timestamp } = getCurrentTime();
+        const message = {
           content: newMessage,
-          isMine: true,
-          time: getCurrentTime(),
-          id: id.toString(), //TODO: change to uuid
-        });
+          isMine: false,
+          time: timeStr,
+          timestamp,
+          id: uuidv4(),
+        };
+        chat?.messages.push(message);
+        chat.lastMessage = message;
       }
     },
   },

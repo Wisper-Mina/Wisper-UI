@@ -3,6 +3,8 @@
 import { useGetChat } from "@/hooks/useGetChat";
 import { usePageWidth } from "@/hooks/usePageWidth";
 import DesktopView from "./DesktopView";
+import { EntireScreen } from "@/components/common/EntireScreen";
+import { StartChat } from "./StartChat";
 
 export const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   const pageWidth = usePageWidth();
@@ -14,7 +16,11 @@ export const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!chat || chat?.chats.length === 0) {
-    return <div>Chat not found</div>;
+    return (
+      <EntireScreen>
+        <StartChat />
+      </EntireScreen>
+    );
   }
 
   if (pageWidth > 700) {

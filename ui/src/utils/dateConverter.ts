@@ -1,6 +1,11 @@
 // time conversion functions (11:08 PM)
-export const getCurrentTime = (): string => {
+export const getCurrentTime = (): {
+  timeStr: string;
+  timestamp: number;
+} => {
   const now = new Date();
+
+  const timestamp = now.getTime();
 
   let hours: number = now.getHours();
   const minutes: number = now.getMinutes();
@@ -12,5 +17,5 @@ export const getCurrentTime = (): string => {
   const minutesStr: string = minutes < 10 ? `0${minutes}` : minutes.toString(); // Dakikayı iki basamaklı yap
 
   const timeStr: string = `${hours}:${minutesStr} ${ampm}`;
-  return timeStr;
+  return { timeStr, timestamp };
 };

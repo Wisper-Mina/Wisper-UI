@@ -16,6 +16,7 @@ export interface MessageType {
   id: string;
   content: string;
   time: string;
+  timestamp: number;
   isMine: boolean;
 }
 
