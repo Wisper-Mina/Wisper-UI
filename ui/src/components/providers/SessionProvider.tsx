@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
-import { setPublicKey } from "@/redux/slices/zkApp/slice";
 import { useAppDispatch } from "@/types/state";
+import { setPublicKey } from "@/redux/slices/session/slice";
 
 export const SessionProvider = ({
   children,

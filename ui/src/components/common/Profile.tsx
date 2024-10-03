@@ -12,11 +12,11 @@ import SignOutIcon from "@/assets/svg/signout.svg";
 import { SettingsIcon } from "@/assets/svg/SettingsIcon";
 import { DarkIcon } from "@/assets/svg/DarkIcon";
 import { LightIcon } from "@/assets/svg/LightIcon";
-import { deletePublicKeyCookie } from "@/redux/slices/zkApp/thunk";
 import { closeOverlay, openOverlay } from "@/redux/slices/overlaySlice";
+import { deletePublicKeyCookie } from "@/redux/slices/session/thunk";
 
 export const Profile = () => {
-  const { image } = useAppSelector((state) => state.zkApp);
+  const { image } = useAppSelector((state) => state.session);
 
   const { theme } = useTheme();
 
@@ -50,7 +50,7 @@ export const Profile = () => {
 };
 
 const ProfileDropdown = () => {
-  const { publicKeyBase58 } = useAppSelector((state) => state.zkApp);
+  const { publicKeyBase58 } = useAppSelector((state) => state.session);
 
   const { theme, setTheme } = useTheme();
 

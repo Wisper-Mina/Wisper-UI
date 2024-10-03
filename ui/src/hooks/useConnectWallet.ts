@@ -1,19 +1,17 @@
 import { PublicKey } from "o1js";
 
-import ZkappWorkerClient from "@/lib/zkAppWorkerClient";
 import { useAppDispatch, useAppSelector } from "@/types/state";
-import { setPublicKeyCookie } from "@/redux/slices/zkApp/thunk";
+import { setPublicKeyCookie } from "@/redux/slices/session/thunk";
 
 export const useConnectWallet = () => {
   const publicKeyBase58 = useAppSelector(
-    (state) => state.zkApp.publicKeyBase58
+    (state) => state.session.publicKeyBase58
   );
 
   const dispatch = useAppDispatch();
 
   const handleConnectWallet = () => {
     (async () => {
-      const zkappWorkerClient = new ZkappWorkerClient();
       const mina = (window as any).mina;
 
       if (mina == null) {
@@ -30,14 +28,6 @@ export const useConnectWallet = () => {
           publicKeyBase58: valuePublicKeyBase58,
         })
       );
-
-      const res = await zkappWorkerClient.fetchAccount({
-        publicKey: publicKey!,
-      });
-
-      const accountExists = res.error == null;
-
-      console.log(accountExists);
     })();
   };
 
