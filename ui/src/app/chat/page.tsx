@@ -1,7 +1,7 @@
-import React from "react";
+import { AllchatPage } from "@/components/pages/Chat/AllchatPage";
 
 const MessagesPage = () => {
-  return <div>MessagesPage</div>;
+  return <AllchatPage />;
 };
 
 export default MessagesPage;

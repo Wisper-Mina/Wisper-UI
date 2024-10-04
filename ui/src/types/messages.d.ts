@@ -4,11 +4,11 @@ export interface ChatResponse {
 
 export interface ChatType {
   id: string; // Chat id
-  chatWith: string; // Public key base 58 of the chat partner
+  chatWith: string | null; // Public key base 58 of the chat partner
   username: string | null; // Username of the chat partner
   image: ImageType; // Image of the chat partner
   unReadMessages: number; // Number of unread messages
-  lastMessage: MessageType; // Last message in the chat
+  lastMessage: MessageType | null; // Last message in the chat
   messages: MessageType[];
 }
 

@@ -26,5 +26,5 @@ export const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   if (pageWidth > 700) {
     return <DesktopView chat={chat}>{children}</DesktopView>;
   }
-  return <div>ChatLayout</div>;
+  return children;
 };

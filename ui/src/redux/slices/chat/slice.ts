@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { ChatResponse, ImageType } from "@/types/messages";
+import { ChatResponse, ChatType, ImageType } from "@/types/messages";
 import { getCurrentTime } from "@/utils/dateConverter";
 
 const initialState: ChatResponse = {
@@ -65,6 +65,18 @@ export const chatSlice = createSlice({
         chat?.messages.push(message);
         chat.lastMessage = message;
       }
+    },
+    setNewChat: (state) => {
+      const newChat: ChatType = {
+        id: uuidv4(),
+        chatWith: null,
+        username: null,
+        image: "default",
+        unReadMessages: 0,
+        lastMessage: null,
+        messages: [],
+      };
+      state.chats.push(newChat);
     },
   },
 });
