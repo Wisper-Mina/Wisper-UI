@@ -53,11 +53,10 @@ export const chatSlice = createSlice({
       const { chatWith, newMessage } = action.payload;
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
-        const id = chat.messages.length + 1;
         const { timeStr, timestamp } = getCurrentTime();
         const message = {
           content: newMessage,
-          isMine: false,
+          isMine: true,
           time: timeStr,
           timestamp,
           id: uuidv4(),

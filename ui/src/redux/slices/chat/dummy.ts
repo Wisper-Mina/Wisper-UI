@@ -7,7 +7,7 @@ export const dummyChat: ChatResponse = {
       chatWith: "B62qk4moHsecw1ScLPycLUXqBaxvDRy3LZ6K8kQdC9WrNZEk5Q7tqRw",
       image: "user1",
       unReadMessages: 2,
-      username: null,
+      username: "John Doe",
       lastMessage: {
         timestamp: 1633660800000,
         id: "1",

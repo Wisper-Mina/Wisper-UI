@@ -4,7 +4,7 @@ import { ChatComp } from "../../ChatComp";
 export const ChatList = () => {
   const { chats } = useAppSelector((state) => state.chat);
   return (
-    <div className="flex flex-col overflow-auto mt-8 max-h-full">
+    <div className="flex flex-col overflow-auto mt-8 max-h-full pb-[100px]">
       {chats.map((chat, index) => (
         <ChatComp
           key={chat.id}

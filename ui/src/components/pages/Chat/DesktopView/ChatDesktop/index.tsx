@@ -1,9 +1,10 @@
-import { ChatType } from "@/types/messages";
-import { Top } from "./Top";
-import { Messages } from "./Messages";
-import { ChatInput } from "./ChatInput";
 import { useState } from "react";
-import { SettingScreen } from "./SettingScreen";
+
+import { ChatType } from "@/types/messages";
+import { ChatTop } from "../../ChatTop";
+import MessageList from "../../MessageList";
+import { ChatInput } from "../../ChatInput";
+import { SettingScreen } from "../../SettingScreen";
 
 const ChatDesktop = ({ chat }: { chat: ChatType }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
@@ -12,15 +13,17 @@ const ChatDesktop = ({ chat }: { chat: ChatType }) => {
     <div className="col-span-11 bg-light-chats-bg dark:bg-dark-chats-bg overflow-hidden h-full rounded-[28px] relative">
       {!isSettingsOpen && (
         <>
-          <Top
-            id={chat?.id}
-            chatWith={chat?.chatWith}
-            username={chat?.username}
-            image={chat?.image}
-            isSettingsOpen={isSettingsOpen}
-            setIsSettingsOpen={setIsSettingsOpen}
-          />
-          <Messages messages={chat?.messages} />
+          <div className="bg-[#F0E8FF] dark:bg-[#151515] py-5 px-9">
+            <ChatTop
+              id={chat?.id}
+              chatWith={chat?.chatWith}
+              username={chat?.username}
+              image={chat?.image}
+              isSettingsOpen={isSettingsOpen}
+              setIsSettingsOpen={setIsSettingsOpen}
+            />
+          </div>
+          <MessageList messages={chat?.messages} />
           <ChatInput chatWith={chat?.chatWith} />
         </>
       )}

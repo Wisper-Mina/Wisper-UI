@@ -1,6 +1,6 @@
 import { MessageType } from "@/types/messages";
 
-export const MessageComp = ({ message }: { message: MessageType }) => {
+export const Message = ({ message }: { message: MessageType }) => {
   if (message?.isMine) {
     return <SenderMessage message={message} />;
   }

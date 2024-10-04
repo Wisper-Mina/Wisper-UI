@@ -1,0 +1,41 @@
+import { useState } from "react";
+
+import { ChatType } from "@/types/messages";
+import MessageList from "../../MessageList";
+import { ChatTop } from "../../ChatTop";
+import { ChatInput } from "../../ChatInput";
+import { SettingScreen } from "../../SettingScreen";
+
+const ChatMobile = ({ chat }: { chat: ChatType }) => {
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  if (isSettingsOpen) {
+    return (
+      <SettingScreen
+        setIsSettingsOpen={setIsSettingsOpen}
+        image={chat.image}
+        username={chat.username}
+        chatWith={chat.chatWith}
+      />
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-screen w-full relative">
+      <div className="mx-4 my-4">
+        <ChatTop
+          id={chat.id}
+          chatWith={chat.chatWith}
+          username={chat.username}
+          image={chat.image}
+          isSettingsOpen={isSettingsOpen}
+          setIsSettingsOpen={setIsSettingsOpen}
+        />
+      </div>
+      <MessageList messages={chat?.messages} />
+      <ChatInput chatWith={chat?.chatWith} />
+    </div>
+  );
+};
+
+export default ChatMobile;

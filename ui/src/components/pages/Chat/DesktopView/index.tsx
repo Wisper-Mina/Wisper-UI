@@ -1,6 +1,7 @@
+import { FC } from "react";
+
 import { MainLogo } from "@/components/common/MainLogo";
 import { ChatResponse } from "@/types/messages";
-import { FC } from "react";
 import { Chats } from "./Chats";
 import { Profile } from "@/components/common/Profile";
 

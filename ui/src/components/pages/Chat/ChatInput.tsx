@@ -6,7 +6,10 @@ import { UpIcon } from "@/assets/svg/UpIcon";
 import { useAppDispatch } from "@/types/state";
 import { setNewMessage } from "@/redux/slices/chat/slice";
 
-export const ChatInput = ({ chatWith }: { chatWith: string }) => {
+export const ChatInput = ({ chatWith }: { chatWith: string | null }) => {
+  if (!chatWith) {
+    return null;
+  }
   const [message, setMessage] = useState<string>("");
 
   const dispatch = useAppDispatch();
@@ -19,7 +22,7 @@ export const ChatInput = ({ chatWith }: { chatWith: string }) => {
   };
 
   return (
-    <div className="absolute left-3 right-3 bottom-[18px] flex items-center gap-x-2">
+    <div className="absolute left-3 right-3 mobile:bottom-[18px] bottom-[48px] flex items-center gap-x-2">
       <label htmlFor="" className="w-full">
         <input
           type="text"

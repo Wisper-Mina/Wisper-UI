@@ -13,7 +13,7 @@ interface SettingScreenProps {
   setIsSettingsOpen: (value: boolean) => void;
   image: ImageType;
   username: string | null;
-  chatWith: string;
+  chatWith: string | null;
 }
 
 export const SettingScreen = ({
@@ -23,6 +23,10 @@ export const SettingScreen = ({
   username,
 }: SettingScreenProps) => {
   const { theme } = useTheme();
+
+  if (!chatWith) {
+    return null;
+  }
 
   const dispatch = useAppDispatch();
 
@@ -60,7 +64,7 @@ export const SettingScreen = ({
       <button onClick={handleBack}>
         <BackIcon theme={theme} />
       </button>
-      <div className="flex items-center gap-x-4 mt-6 px-4">
+      <div className="flex flex-col mobile:flex-row items-center gap-x-4 mt-6 px-4">
         <Image alt="user" src={`/users/${image}.svg`} width={72} height={72} />
         <div className="flex items-start gap-x-2.5">
           <div className={` flex-1 py-1 flex flex-col gap-y-2`}>
@@ -100,15 +104,15 @@ export const SettingScreen = ({
           </div>
           <button onClick={handleEditName}>
             {!isEditName ? (
-              <EditIcon theme={theme} />
+              <EditIcon theme={theme} size={24} />
             ) : (
               <CancelIcon theme={theme} />
             )}
           </button>
         </div>
       </div>
-      <div className="py-8 mt-4 flex flex-col gap-y-8 items-center justify-center">
-        <div className="flex items-center gap-x-8">
+      <div className="mt-4 flex items-center justify-center flex-col">
+        <div className="flex py-8  flex-wrap items-center justify-center gap-8 max-w-[335px] mobile:max-w-[500px]">
           <button
             onClick={() => {
               selectImage("user1");
@@ -154,8 +158,6 @@ export const SettingScreen = ({
               } rounded-full`}
             />
           </button>
-        </div>
-        <div className="flex items-center gap-x-8">
           <button
             onClick={() => {
               selectImage("user4");
