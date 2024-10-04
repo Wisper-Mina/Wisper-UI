@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ChatType } from "@/types/messages";
 import MessageList from "../../MessageList";
 import { ChatTop } from "../../ChatTop";
 import { ChatInput } from "../../ChatInput";
 import { SettingScreen } from "../../SettingScreen";
+import { useAppDispatch } from "@/types/state";
+import { clearUnReadMessages } from "@/redux/slices/chat/slice";
 
 const ChatMobile = ({ chat }: { chat: ChatType }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (!!chat?.chatWith) {
+      dispatch(clearUnReadMessages({ chatWith: chat.chatWith }));
+    }
+  }, []);
 
   if (isSettingsOpen) {
     return (

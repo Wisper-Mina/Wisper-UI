@@ -77,10 +77,27 @@ export const chatSlice = createSlice({
       };
       state.chats.push(newChat);
     },
+    clearUnReadMessages: (
+      state,
+      action: PayloadAction<{
+        chatWith: string;
+      }>
+    ) => {
+      const { chatWith } = action.payload;
+      const chat = state.chats.find((chat) => chat.chatWith === chatWith);
+      if (chat) {
+        chat.unReadMessages = 0;
+      }
+    },
   },
 });
 
-export const { setChat, setUsername, setImage, setNewMessage } =
-  chatSlice.actions;
+export const {
+  setChat,
+  setUsername,
+  setImage,
+  setNewMessage,
+  clearUnReadMessages,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;
