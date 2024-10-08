@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,14 +8,14 @@ import { SettingsIcon } from "@/assets/svg/SettingsIcon";
 import { useAppDispatch } from "@/types/state";
 import { openModal } from "@/redux/slices/modal/slice";
 import { ChatSettings } from "@/components/modals/ChatSettings";
+import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { closeOverlay, openOverlay } from "@/redux/slices/overlaySlice";
 
 interface ChatTopProps {
   id: string;
   chatWith: string | null;
   username: string | null;
   image: string;
-  isDropdownOpen: boolean;
-  setIsDropdownOpen: (value: boolean) => void;
   setIsSettingsOpen: (value: boolean) => void;
 }
 
@@ -24,30 +24,29 @@ export const ChatTop: FC<ChatTopProps> = ({
   chatWith,
   username,
   image,
-  isDropdownOpen,
-  setIsDropdownOpen,
   setIsSettingsOpen,
 }) => {
   const { theme } = useTheme();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const router = useRouter();
 
   const dispatch = useAppDispatch();
 
   const handleSettings = () => {
-    if (isDropdownOpen) {
-      setIsDropdownOpen(false);
-    } else {
-      setIsDropdownOpen(true);
-      dispatch(
-        openModal({
-          modal: (
-            <ChatSettings chat_id={id} setIsSettingsOpen={setIsSettingsOpen} />
-          ),
-        })
-      );
-    }
+    setIsDropdownOpen((prev) => {
+      dispatch(openOverlay());
+      return !prev;
+    });
   };
+
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+    dispatch(closeOverlay());
+  };
+
+  const ref = useOutsideClick(closeDropdown);
 
   return (
     <div className="flex justify-between items-center">
@@ -82,9 +81,18 @@ export const ChatTop: FC<ChatTopProps> = ({
           </div>
         </div>
       </div>
-      <button onClick={handleSettings} className="p-2">
-        <SettingsIcon theme={theme} />
-      </button>
+      <div ref={ref}>
+        <button onClick={handleSettings} className="p-2">
+          <SettingsIcon theme={theme} />
+        </button>
+        {isDropdownOpen && (
+          <ChatSettings
+            chat_id={id}
+            setIsSettingsOpen={setIsSettingsOpen}
+            setIsDropdownOpen={setIsDropdownOpen}
+          />
+        )}
+      </div>
     </div>
   );
 };

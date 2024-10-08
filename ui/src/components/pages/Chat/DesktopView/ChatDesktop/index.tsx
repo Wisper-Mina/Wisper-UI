@@ -9,8 +9,6 @@ import { useAppDispatch } from "@/types/state";
 import { clearUnReadMessages } from "@/redux/slices/chat/slice";
 
 const ChatDesktop = ({ chat }: { chat: ChatType }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
@@ -31,8 +29,6 @@ const ChatDesktop = ({ chat }: { chat: ChatType }) => {
               chatWith={chat.chatWith}
               username={chat.username}
               image={chat.image}
-              isDropdownOpen={isDropdownOpen}
-              setIsDropdownOpen={setIsDropdownOpen}
               setIsSettingsOpen={setIsSettingsOpen}
             />
           </div>

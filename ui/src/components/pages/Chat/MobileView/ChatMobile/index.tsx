@@ -40,8 +40,6 @@ const ChatMobile = ({ chat }: { chat: ChatType }) => {
           chatWith={chat.chatWith}
           username={chat.username}
           image={chat.image}
-          isDropdownOpen={isDropdownOpen}
-          setIsDropdownOpen={setIsDropdownOpen}
           setIsSettingsOpen={setIsSettingsOpen}
         />
       </div>

@@ -3,6 +3,7 @@ import { PublicKey } from "o1js";
 
 import { useAppDispatch, useAppSelector } from "@/types/state";
 import { setPublicKeyCookie } from "@/redux/slices/session/thunk";
+import { useRouter } from "next/navigation";
 
 export const useConnectWallet = () => {
   const publicKeyBase58 = useAppSelector(
@@ -10,6 +11,8 @@ export const useConnectWallet = () => {
   );
 
   const dispatch = useAppDispatch();
+
+  const router = useRouter();
 
   const handleConnectWallet = () => {
     (async () => {
@@ -28,7 +31,11 @@ export const useConnectWallet = () => {
         setPublicKeyCookie({
           publicKeyBase58: valuePublicKeyBase58,
         })
-      );
+      ).then((res: any) => {
+        if (!res?.error) {
+          router.push("/chat");
+        }
+      });
     })();
   };
 

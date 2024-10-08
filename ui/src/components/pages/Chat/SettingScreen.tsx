@@ -36,7 +36,7 @@ export const SettingScreen = ({
 
   const [newName, setNewName] = useState<string>(username || "");
 
-  const [selectedImage, setSelectedImage] = useState<ImageType>();
+  const [selectedImage, setSelectedImage] = useState<ImageType>(image);
 
   const handleEditName = () => {
     setIsEditName(!isEditName);

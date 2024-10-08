@@ -24,7 +24,7 @@ export const EditIcon: React.FC<CustomProp> = ({
       d="M16 20.25h-4v-4l12-12 4 4-12 12ZM21 7.25l4 4"
     />
     <path
-      stroke="#000"
+      stroke={theme === "light" ? "#000" : "#fff"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

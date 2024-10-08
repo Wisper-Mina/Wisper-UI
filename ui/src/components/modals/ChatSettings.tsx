@@ -8,7 +8,7 @@ import TrashIcon from "@/assets/svg/trash.svg";
 import { APP_URL } from "@/lib/constants";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@/types/state";
-import { closeModal } from "@/redux/slices/modal/slice";
+import { closeOverlay } from "@/redux/slices/overlaySlice";
 
 interface ChatSettingsProps {
   icon: React.ReactNode;
@@ -21,17 +21,21 @@ interface ChatSettingsProps {
 export const ChatSettings = ({
   chat_id,
   setIsSettingsOpen,
+  setIsDropdownOpen,
 }: {
   chat_id: string;
   setIsSettingsOpen: (value: boolean) => void;
+  setIsDropdownOpen: (value: boolean) => void;
 }) => {
   const { theme } = useTheme();
 
   const chat_link_url = `${APP_URL}/chats/${chat_id}`;
 
+  const dispatch = useAppDispatch();
+
   const items: ChatSettingsProps[] = [
     {
-      icon: <ShareIcon theme={theme} />,
+      icon: <ShareIcon theme={theme} size={20} />,
       text: "Share Link",
       callback: () => {
         window.navigator.clipboard.writeText(chat_link_url);
@@ -70,7 +74,14 @@ export const ChatSettings = ({
         <ChatSettingsItem
           key={index}
           isLast={items.length - 1 === index}
-          {...item}
+          callback={() => {
+            item.callback();
+            setIsDropdownOpen(false);
+            dispatch(closeOverlay());
+          }}
+          icon={item.icon}
+          text={item.text}
+          type={item.type}
         />
       ))}
     </div>
@@ -84,15 +95,9 @@ const ChatSettingsItem = ({
   type,
   callback,
 }: ChatSettingsProps) => {
-  const dispatch = useAppDispatch();
-
-  const handleChatSettingsItem = () => {
-    callback();
-    dispatch(closeModal());
-  };
   return (
     <button
-      onClick={handleChatSettingsItem}
+      onClick={callback}
       className={`px-5 py-3 flex items-center gap-x-2 ${
         !isLast ? "border-b" : "border-0"
       } border-light-grey`}

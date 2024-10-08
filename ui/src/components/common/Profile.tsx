@@ -14,6 +14,8 @@ import { DarkIcon } from "@/assets/svg/DarkIcon";
 import { LightIcon } from "@/assets/svg/LightIcon";
 import { closeOverlay, openOverlay } from "@/redux/slices/overlaySlice";
 import { deletePublicKeyCookie } from "@/redux/slices/session/thunk";
+import { toast } from "react-toastify";
+import { ShareIcon } from "@/assets/svg/ShareIcon";
 
 export const Profile = () => {
   const { image } = useAppSelector((state) => state.session);
@@ -44,12 +46,12 @@ export const Profile = () => {
         <Image alt="user" src={`/users/${image}.svg`} width={36} height={36} />
         <DownIcon theme={theme} />
       </button>
-      {isOpen && <ProfileDropdown />}
+      {isOpen && <ProfileDropdown closeDropdown={closeDropdown} />}
     </div>
   );
 };
 
-const ProfileDropdown = () => {
+const ProfileDropdown = ({ closeDropdown }: { closeDropdown: () => void }) => {
   const { publicKeyBase58 } = useAppSelector((state) => state.session);
 
   const { theme, setTheme } = useTheme();
@@ -66,6 +68,17 @@ const ProfileDropdown = () => {
   const signout = () => {
     dispatch(deletePublicKeyCookie());
     router.push("/home");
+    closeDropdown();
+  };
+
+  const handleShare = () => {
+    if (!publicKeyBase58) return;
+    window.navigator.clipboard.writeText(publicKeyBase58);
+    toast.success("Copied !", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+    closeDropdown();
   };
 
   const handleProfileSettings = () => {
@@ -100,28 +113,32 @@ const ProfileDropdown = () => {
         </button>
       </div>
       <div
+        onClick={handleShare}
+        className="px-5 py-3 flex items-center cursor-pointer gap-x-1 border-b border-light-grey"
+      >
+        <ShareIcon theme={theme} size={20} />
+        <span className="font-semibold text-sm">Share Your Public Key</span>
+      </div>
+      <div
         onClick={handleProfileSettings}
-        className="px-5 py-3 flex items-center gap-x-1 border-b border-light-grey"
+        className="px-5 py-3 flex items-center cursor-pointer gap-x-1 border-b border-light-grey"
       >
         <SettingsIcon theme={theme} size={20} />
         <span className="font-semibold text-sm">Profile Settings</span>
       </div>
-      <div
-        onClick={toggleTheme}
-        className="px-5 py-3 flex items-center justify-between"
-      >
+      <div className="px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           {mode.icon}
           <span className="font-semibold text-sm">{mode.text}</span>
         </div>
-        <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${mode.bgColor}`}
+        <div
+          onClick={toggleTheme}
+          className={`relative inline-flex cursor-pointer h-6 w-11 items-center rounded-full transition-colors duration-300 ${mode.bgColor}`}
         >
           <span
             className={`${mode.translate} inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300`}
           />
-        </button>
+        </div>
       </div>
     </div>
   );
