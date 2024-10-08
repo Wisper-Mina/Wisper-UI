@@ -31,7 +31,7 @@ export const Profile = () => {
     dispatch(closeOverlay());
   };
 
-  const ref = useOutsideClick(closeDropdown);
+  const ref = useOutsideClick(closeDropdown, isOpen);
 
   const handleDropdown = () => {
     setIsOpen((prev) => {

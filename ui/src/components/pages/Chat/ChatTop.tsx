@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { BackIcon } from "@/assets/svg/BackIcon";
 import { SettingsIcon } from "@/assets/svg/SettingsIcon";
 import { useAppDispatch } from "@/types/state";
-import { openModal } from "@/redux/slices/modal/slice";
 import { ChatSettings } from "@/components/modals/ChatSettings";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { closeOverlay, openOverlay } from "@/redux/slices/overlaySlice";

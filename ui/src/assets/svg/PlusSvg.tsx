@@ -3,12 +3,16 @@ import { CustomProp } from "./type";
 
 export const PlusSvg: React.FC<CustomProp> = ({
   theme = "light",
+  size = 16,
   ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={16}
     height={16}
+    style={{
+      scale: size / 16,
+    }}
     fill="none"
     {...props}
   >
