@@ -10,6 +10,7 @@ import { CreateChat } from "./CreateChat";
 import { isValidChatLink } from "@/utils/isValidUrl";
 import { useRouter } from "next/navigation";
 import { APP_URL } from "@/lib/constants";
+import { usePageWidth } from "@/hooks/usePageWidth";
 
 export const StartChatModal = ({ close }: { close: () => void }) => {
   const { theme } = useTheme();
@@ -17,6 +18,8 @@ export const StartChatModal = ({ close }: { close: () => void }) => {
   const dispatch = useAppDispatch();
 
   const router = useRouter();
+
+  const pageWidth = usePageWidth();
 
   const [link, setLink] = useState<string>("");
 
@@ -37,7 +40,13 @@ export const StartChatModal = ({ close }: { close: () => void }) => {
   };
 
   return (
-    <div className="absolute bottom-9 left-4 font-roboto right-4 z-[60] bg-white dark:bg-dark-bg flex flex-col rounded-[20px]">
+    <div
+      className={`fixed ${
+        pageWidth <= 700
+          ? "left-4 bottom-9"
+          : "left-1/2 -translate-x-1/2 w-fit top-1/2 -translate-y-1/2"
+      } font-roboto right-4 z-[60] bg-white dark:bg-dark-bg flex flex-col rounded-[20px]`}
+    >
       <button
         onClick={createChat}
         className="p-5 flex items-center gap-x-2 border-b border-light-grey"

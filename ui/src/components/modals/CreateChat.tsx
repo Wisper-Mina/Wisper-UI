@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 
+import { toast } from "react-toastify";
+
 import { CloseIcon } from "@/assets/svg/CloseIcon";
 import { ShareIcon } from "@/assets/svg/ShareIcon";
 import InformationCircle from "@/assets/svg/information-circle.svg";
@@ -13,7 +15,7 @@ import { APP_URL } from "@/lib/constants";
 import { useAppDispatch, useAppSelector } from "@/types/state";
 import { createNewChat } from "@/redux/slices/chat/thunk";
 import { closeModal } from "@/redux/slices/modal/slice";
-import { toast } from "react-toastify";
+import { usePageWidth } from "@/hooks/usePageWidth";
 
 export const CreateChat = () => {
   const [state, setState] = useState<"create" | "start">("create");
@@ -50,8 +52,17 @@ const GetRecipientPublicKey = ({
   createChat: (receipientPublicKey: string) => void;
 }) => {
   const [receipientPublicKey, setReceipientPublicKey] = useState<string>("");
+
+  const pageWidth = usePageWidth();
+
   return (
-    <div className="bg-white font-roboto dark:bg-dark-bg px-5 pt-9 pb-6 rounded-[20px] flex flex-col fixed z-50 left-4 right-4 top-1/2">
+    <div
+      className={`bg-white font-roboto dark:bg-dark-bg px-5 pt-9 pb-6 rounded-[20px] flex flex-col fixed z-50 ${
+        pageWidth <= 700
+          ? "left-4 right-4"
+          : "left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px]"
+      } top-1/2`}
+    >
       <h5 className="text-black dark:text-white text-sm font-semibold">
         Recipient’s Public Key
       </h5>
@@ -82,6 +93,8 @@ const GetRecipientPublicKey = ({
 const StartChat = ({ chat_id }: { chat_id: string }) => {
   const { theme } = useTheme();
 
+  const pageWidth = usePageWidth();
+
   const router = useRouter();
 
   const dispatch = useAppDispatch();
@@ -110,7 +123,13 @@ const StartChat = ({ chat_id }: { chat_id: string }) => {
   };
 
   return (
-    <div className="bg-white font-roboto dark:bg-dark-bg px-5 pt-9 pb-6 rounded-[20px] flex flex-col fixed z-50 left-4 right-4 top-1/2 ">
+    <div
+      className={`bg-white font-roboto dark:bg-dark-bg px-5 pt-9 pb-6 rounded-[20px] flex flex-col fixed z-50 ${
+        pageWidth <= 700
+          ? "left-4 right-4"
+          : "left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px]"
+      } top-1/2`}
+    >
       <button onClick={() => close()} className="absolute top-1 right-2.5">
         <CloseIcon theme={theme} />
       </button>

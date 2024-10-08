@@ -10,6 +10,7 @@ export const createNewChat = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      //TODO: check publickey is valid
       const res = await fetch("/api/chat_id/create", {
         method: "POST",
         body: JSON.stringify({

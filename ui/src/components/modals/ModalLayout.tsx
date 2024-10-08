@@ -23,7 +23,7 @@ export const ModalLayout = () => {
     dispatch(closeModal());
   };
 
-  const ref = useOutsideClick(closeDropdown);
+  const ref = useOutsideClick(closeDropdown, !!modal);
   return (
     <>
       <div ref={ref}>{modal}</div>

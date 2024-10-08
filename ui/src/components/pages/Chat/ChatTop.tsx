@@ -45,7 +45,7 @@ export const ChatTop: FC<ChatTopProps> = ({
     dispatch(closeOverlay());
   };
 
-  const ref = useOutsideClick(closeDropdown);
+  const ref = useOutsideClick(closeDropdown, isDropdownOpen);
 
   return (
     <div className="flex justify-between items-center">
