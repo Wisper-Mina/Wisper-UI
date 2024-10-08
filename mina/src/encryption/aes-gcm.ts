@@ -1,17 +1,5 @@
 import * as crypto from 'crypto';
 import { EncryptedData } from '../interfaces/message.interface';
-import { ForeignCurveV2 } from "o1js";
-
-// Function to derive a key from ForeignCurveV2
-export function deriveKeyFromForeignCurve(foreignCurve: ForeignCurveV2): Buffer {
-  const x = foreignCurve.x.toString(); // Get the x coordinate (or another unique property)
-  const y = foreignCurve.y.toString(); // Get the y coordinate
-  
-  // Hash the concatenated x and y values to derive a 256-bit key
-  const hash = crypto.createHash('sha256');
-  hash.update(x + y);
-  return hash.digest(); // 256-bit key
-}
 
 // Function to generate a random key
 export function generateKey(): Buffer {

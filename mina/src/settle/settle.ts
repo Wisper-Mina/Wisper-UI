@@ -1,4 +1,10 @@
-import { Field, SmartContract, state, State, method, PublicKey, MerkleTree } from 'o1js';
+import { Field, SmartContract, state, State, method, PublicKey, MerkleTree, ZkProgram } from 'o1js';
+import { MessageVerificationProgram } from '../proof/proof';
+
+
+await MessageVerificationProgram.compile();
+
+export class MessageVerificationProgramProof extends ZkProgram.Proof(MessageVerificationProgram) { }
 
 const MESSAGE_TREE_DEPTH = 10;
 export class Wisper extends SmartContract {
@@ -35,7 +41,7 @@ export class Wisper extends SmartContract {
   }
 
   //Needed info to verification can be added to parameters.
-  @method async settleChat(hostUser: PublicKey, guestUser: PublicKey, chatId: Field, merkleRoot: Field, timestamp: Field ) {
+  @method async settleChat(hostUser: PublicKey, guestUser: PublicKey, chatId: Field, merkleRoot: Field, timestamp: Field, proof: MessageVerificationProgramProof ) {
     const senderPublicKey = this.sender.getAndRequireSignatureV2();
     
     // Check if senderPublicKey is either hostUser or guestUser
@@ -59,7 +65,9 @@ export class Wisper extends SmartContract {
     storedTimestamp.assertEquals(Field(0));
 
     // Call the verify function from ZKProgram and verify the proof
-    
+    proof.verify();
+
+
     this.merkleRoot.set(merkleRoot);
     this.timestamp.set(timestamp);
   }
