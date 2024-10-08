@@ -5,6 +5,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { ChatResponse, ChatType, ImageType } from "@/types/messages";
 import { getCurrentTime } from "@/utils/dateConverter";
+import { createNewChat } from "./thunk";
 
 const initialState: ChatResponse = {
   chats: [],
@@ -65,18 +66,6 @@ export const chatSlice = createSlice({
         chat.lastMessage = message;
       }
     },
-    setNewChat: (state) => {
-      const newChat: ChatType = {
-        id: uuidv4(),
-        chatWith: null,
-        username: null,
-        image: "default",
-        unReadMessages: 0,
-        lastMessage: null,
-        messages: [],
-      };
-      state.chats.push(newChat);
-    },
     clearUnReadMessages: (
       state,
       action: PayloadAction<{
@@ -89,6 +78,20 @@ export const chatSlice = createSlice({
         chat.unReadMessages = 0;
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(createNewChat.fulfilled, (state, action) => {
+      const newChat: ChatType = {
+        id: action.payload.chat_id,
+        chatWith: action.payload.receiverPublicKey,
+        username: null,
+        image: "default",
+        unReadMessages: 0,
+        lastMessage: null,
+        messages: [],
+      };
+      state.chats.push(newChat);
+    });
   },
 });
 

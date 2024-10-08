@@ -4,6 +4,7 @@ import zkAppReducer from "./slices/zkApp/slice";
 import chatReducer from "./slices/chat/slice";
 import overlayReducer from "./slices/overlaySlice";
 import sessionReducer from "./slices/session/slice";
+import modalReducer from "./slices/modal/slice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     session: sessionReducer,
     chat: chatReducer,
     overlay: overlayReducer,
+    modal: modalReducer,
   },
 });
 

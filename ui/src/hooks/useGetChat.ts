@@ -37,9 +37,10 @@ export const useGetChat = () => {
       const mergedChat = [...storedChat, ...socketChat];
 
       // Save the merged chat to the redux store
-      // dispatch(setChat({ chats: mergedChat }));
-      dispatch(setChat(dummyChat));
-    } catch (error) {
+      dispatch(setChat({ chats: mergedChat }));
+      // dispatch(setChat(dummyChat));
+    } catch (e) {
+      // Handle the error
     } finally {
       setLoading(false);
     }

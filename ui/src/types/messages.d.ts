@@ -4,6 +4,7 @@ export interface ChatResponse {
 
 export interface ChatType {
   id: string; // Chat id
+  // type: "active" | "terminated" | "deleted"; // Chat type
   chatWith: string | null; // Public key base 58 of the chat partner
   username: string | null; // Username of the chat partner
   image: ImageType; // Image of the chat partner

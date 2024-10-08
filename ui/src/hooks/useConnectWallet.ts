@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublicKey } from "o1js";
 
 import { useAppDispatch, useAppSelector } from "@/types/state";
