@@ -16,7 +16,7 @@ export const ChatScreen = ({ chat_id }: { chat_id: string }) => {
     return <div>Chat not found</div>;
   }
 
-  if (pageWidth < 700) {
+  if (pageWidth <= 700) {
     return <ChatMobile chat={chat} />;
   }
 

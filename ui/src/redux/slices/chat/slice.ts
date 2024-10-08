@@ -29,6 +29,7 @@ export const chatSlice = createSlice({
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         chat.username = username;
+        localStorage.setItem("chats", JSON.stringify(state.chats));
       }
     },
     setImage: (
@@ -42,6 +43,7 @@ export const chatSlice = createSlice({
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         chat.image = image;
+        localStorage.setItem("chats", JSON.stringify(state.chats));
       }
     },
     setNewMessage: (
@@ -64,6 +66,7 @@ export const chatSlice = createSlice({
         };
         chat?.messages.push(message);
         chat.lastMessage = message;
+        localStorage.setItem("chats", JSON.stringify(state.chats));
       }
     },
     clearUnReadMessages: (
@@ -76,6 +79,7 @@ export const chatSlice = createSlice({
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         chat.unReadMessages = 0;
+        localStorage.setItem("chats", JSON.stringify(state.chats));
       }
     },
   },
@@ -91,6 +95,7 @@ export const chatSlice = createSlice({
         messages: [],
       };
       state.chats.push(newChat);
+      localStorage.setItem("chats", JSON.stringify(state.chats));
     });
   },
 });
