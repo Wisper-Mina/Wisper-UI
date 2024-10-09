@@ -52,7 +52,7 @@ export function decryptChatID(
     }
     const decoded = jwt.verify(chatID, JWT_SECRET) as DecodedChatID;
 
-    const canJoin = decoded.rpk === myPublicKey;
+    const canJoin = decoded.rpk === myPublicKey || decoded.spk === myPublicKey;
 
     return { senderPublicKey: decoded.spk, isJoinable: canJoin };
   } catch (error) {

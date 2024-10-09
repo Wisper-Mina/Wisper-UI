@@ -4,6 +4,7 @@ import { useAppSelector } from "@/types/state";
 import ChatDesktop from "./DesktopView/ChatDesktop";
 import { usePageWidth } from "@/hooks/usePageWidth";
 import ChatMobile from "./MobileView/ChatMobile";
+import { notFound } from "next/navigation";
 
 export const ChatScreen = ({ chat_id }: { chat_id: string }) => {
   const chat = useAppSelector((state) =>
@@ -13,7 +14,7 @@ export const ChatScreen = ({ chat_id }: { chat_id: string }) => {
   const pageWidth = usePageWidth();
 
   if (!chat) {
-    return <div>Chat not found</div>;
+    return notFound();
   }
 
   if (pageWidth <= 700) {
