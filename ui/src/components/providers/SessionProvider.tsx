@@ -4,11 +4,12 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAppDispatch } from "@/types/state";
-import { setPublicKey } from "@/redux/slices/session/slice";
+import { setImage, setPublicKey } from "@/redux/slices/session/slice";
 import {
   deletePublicKeyCookie,
   setPublicKeyCookie,
 } from "@/redux/slices/session/thunk";
+import { ImageType } from "@/types/messages";
 
 export const SessionProvider = ({
   children,
@@ -50,5 +51,13 @@ export const SessionProvider = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
+
+  useEffect(() => {
+    const user_image = localStorage.getItem("user_image");
+    if (user_image) {
+      dispatch(setImage(user_image as ImageType));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return <>{children}</>;
 };

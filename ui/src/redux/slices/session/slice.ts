@@ -19,6 +19,7 @@ export const sessionSlice = createSlice({
     },
     setImage: (state, action: PayloadAction<ImageType>) => {
       state.image = action.payload;
+      localStorage.setItem("user_image", action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -34,6 +35,6 @@ export const sessionSlice = createSlice({
   },
 });
 
-export const { setPublicKey } = sessionSlice.actions;
+export const { setPublicKey, setImage } = sessionSlice.actions;
 
 export default sessionSlice.reducer;

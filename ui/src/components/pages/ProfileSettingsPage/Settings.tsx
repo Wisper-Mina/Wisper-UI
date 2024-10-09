@@ -1,120 +1,56 @@
+import { BackIcon } from "@/assets/svg/BackIcon";
+import { setImage } from "@/redux/slices/session/slice";
+import { ImageType } from "@/types/messages";
+import { useAppDispatch, useAppSelector } from "@/types/state";
 import { useTheme } from "next-themes";
-import { useState } from "react";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
-import { BackIcon } from "@/assets/svg/BackIcon";
-import { EditIcon } from "@/assets/svg/EditIcon";
-import { CancelIcon } from "@/assets/svg/CancelIcon";
-import { useAppDispatch } from "@/types/state";
-import { setImage, setUsername } from "@/redux/slices/chat/slice";
-import { ImageType } from "@/types/messages";
+export const Settings = () => {
+  const router = useRouter();
 
-interface SettingScreenProps {
-  setIsSettingsOpen: (value: boolean) => void;
-  image: ImageType;
-  username: string | null;
-  chatWith: string | null;
-}
-
-export const SettingScreen = ({
-  setIsSettingsOpen,
-  image,
-  chatWith,
-  username,
-}: SettingScreenProps) => {
   const { theme } = useTheme();
 
   const dispatch = useAppDispatch();
 
-  const [isEditName, setIsEditName] = useState<boolean>(false);
-
-  const [newName, setNewName] = useState<string>(username || "");
+  const { image, publicKeyBase58 } = useAppSelector((state) => state.session);
 
   const [selectedImage, setSelectedImage] = useState<ImageType>(image);
 
-  if (!chatWith) {
-    return null;
-  }
-
-  const handleEditName = () => {
-    setIsEditName(!isEditName);
-  };
-
   const handleBack = () => {
-    setIsSettingsOpen(false);
-  };
-
-  const handleSaveUsername = () => {
-    dispatch(setUsername({ chatWith, username: newName }));
-    setIsEditName(false);
-    setIsSettingsOpen(false);
-  };
-
-  const handleSaveImage = () => {
-    dispatch(setImage({ chatWith, image: selectedImage || "default" }));
-    toast.success("Image saved successfully", {
-      position: "top-right",
-      autoClose: 2000,
-    });
-    setIsSettingsOpen(false);
+    router.back();
   };
 
   const selectImage = (image: ImageType) => {
     setSelectedImage(image);
   };
 
+  const handleSaveImage = () => {
+    dispatch(setImage(selectedImage));
+    toast.success("Image saved successfully", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+  };
   return (
     <div className="p-6 flex flex-col">
-      <button onClick={handleBack}>
+      <button className="ml-20" onClick={handleBack}>
         <BackIcon theme={theme} />
       </button>
-      <div className="flex flex-col mobile:flex-row items-center gap-x-4 mt-6 px-4">
+      <div className="flex flex-col justify-center mobile:flex-row items-center gap-x-4 mt-6 px-4">
         <Image alt="user" src={`/users/${image}.svg`} width={72} height={72} />
         <div className="flex items-start gap-x-2.5">
           <div className={` flex-1 py-1 flex flex-col gap-y-2`}>
-            {username && (
-              <p className="font-semibold text-light-text-secondary dark:text-white text-base">
-                {username}
-              </p>
-            )}
             <p
-              className={` font-semibold  text-light-chats-text dark:text-white text-sm ${
-                username ? "text-opacity-60" : ""
-              }`}
+              className={` font-semibold  text-light-chats-text dark:text-white text-sm `}
             >
-              {chatWith?.slice(0, 24) + "..." + chatWith?.slice(-12)}
+              {publicKeyBase58?.slice(0, 24) +
+                "..." +
+                publicKeyBase58?.slice(-12)}
             </p>
-            {isEditName && (
-              <label className="flex items-center gap-x-2">
-                <input
-                  type="text"
-                  className="w-full px-4 h-9 rounded-[44px] border border-light-input-border outline-none text-sm"
-                  value={newName}
-                  placeholder={username || "Create a username"}
-                  onChange={(e) => setNewName(e.target.value)}
-                />
-                <button
-                  onClick={handleSaveUsername}
-                  className={`${
-                    !!newName
-                      ? "bg-secondary cursor-pointer"
-                      : "bg-primary cursor-default"
-                  } rounded-[20px] bg-primary px-3 h-9 text-white text-sm`}
-                >
-                  Save
-                </button>
-              </label>
-            )}
           </div>
-          <button onClick={handleEditName}>
-            {!isEditName ? (
-              <EditIcon theme={theme} size={24} />
-            ) : (
-              <CancelIcon theme={theme} />
-            )}
-          </button>
         </div>
       </div>
       <div className="mt-4 flex items-center justify-center flex-col">

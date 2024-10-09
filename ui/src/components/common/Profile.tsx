@@ -82,7 +82,8 @@ const ProfileDropdown = ({ closeDropdown }: { closeDropdown: () => void }) => {
   };
 
   const handleProfileSettings = () => {
-    //TODO: handle profile settings
+    router.push("/profile-settings");
+    closeDropdown();
   };
 
   const darkMode = {
