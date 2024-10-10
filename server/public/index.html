@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Private Chat</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Chat Information -->
+    <div id="chatInfo" class="chat-info">
+      <p id="publicKeyDisplay"></p>
+      <p id="chatIdDisplay"></p>
+      <p id="receiverStatus"></p>
+    </div>
+    <div id="chat"></div>
+
+    <div id="typing"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div class="close-button-container">
+          <span class="close-button" id="closeModal">&times;</span>
+        </div>
+        <h2>Join Chat</h2>
+        <label for="pubkey">
+          <span>Public Key:</span>
+          <input
+            type="text"
+            id="pubkey"
+            required
+            placeholder="Enter your Public Key"
+          />
+        </label>
+        <label for="chatId">
+          <span>Chat ID:</span>
+          <input type="text" id="chatId" required placeholder="Enter chat id" />
+        </label>
+        <button id="joinChatButton">Join Chat</button>
+      </div>
+    </div>
+
+    <form id="message-form">
+      <input
+        type="text"
+        id="message"
+        placeholder="Type your message here..."
+        autocomplete="off"
+      />
+      <button type="submit">Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="chat.js"></script>
+  </body>
+</html>
