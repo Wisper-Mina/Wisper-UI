@@ -7,7 +7,7 @@ const streamMiddleware = require("./utils/stream");
 const config = require("config");
 const http = require("http");
 const bodyParser = require("body-parser");
-const setupSocket = require("./socket");
+const setupSocket = require("./lib/socket");
 
 const app = express();
 const server = http.createServer(app);

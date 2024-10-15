@@ -139,7 +139,10 @@ body {
   cursor: pointer;
 }
 
-#joinChatButton {
+#joinChatButton,
+#createChatButton,
+#confirmJoinButton,
+#confirmCreateButton {
   padding: 10px 20px;
   border: none;
   margin-top: 20px;
@@ -149,10 +152,22 @@ body {
   cursor: pointer;
 }
 
+#joinChatButton:hover,
+#createChatButton:hover,
+#confirmJoinButton:hover,
+#confirmCreateButton:hover {
+  background-color: #0056b3;
+}
+
 .chat-info {
   background: #f9f9f9;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
+}
+
+#typing {
+  margin: 10px 0;
+  font-style: italic;
 }

@@ -1,14 +1,34 @@
+const jwt = require("jsonwebtoken");
 const { Server } = require("socket.io");
+const {
+  connectRabbitMQ,
+  receiveMessagesFromUserQueue,
+  sendMessageToUserQueue,
+} = require("./messageQueue");
+const logger = require("../utils/winstonLogger");
 
-const setupSocket = (server) => {
+const JWT_SECRET = process.env.JWT_SECRET;
+
+const setupSocket = async (server) => {
   const io = new Server(server);
 
   const users = {};
 
-  io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+  await connectRabbitMQ()
+    .then(() => {
+      logger.info(
+        "RabbitMQ connection established. Setting up message listener."
+      );
+    })
+    .catch((error) => {
+      logger.error("Failed to set up RabbitMQ:", error);
+    });
 
-    socket.on("join chat", (chatId, pubkey) => {
+  io.on("connection", (socket) => {
+    logger.info("User connected:", socket.id);
+
+    socket.on("join chat", async (chatId, pubkey) => {
+      await receiveMessagesFromUserQueue(io, pubkey, users);
       // Kullanıcı sayısını kontrol et
       if (!users[chatId]) {
         users[chatId] = [];
@@ -21,9 +41,8 @@ const setupSocket = (server) => {
 
       users[chatId].push({ socketId: socket.id, pubkey });
       socket.join(chatId); // Kullanıcıyı belirli bir chat ID'sine katılmasını sağla
-      console.log(`User ${pubkey} joined chat: ${chatId}`);
+      logger.info(`User ${pubkey} joined chat: ${chatId}`);
 
-      //   socket.to(chatId).emit("user online", pubkey);
       // Diğer kullanıcılara çevrimiçi bilgisi gönder
       socket.to(chatId).emit("user online", pubkey); // Diğer kullanıcılara online bilgisi gönder
       // Kendisine diğer çevrimiçi kullanıcıları bildir
@@ -31,21 +50,19 @@ const setupSocket = (server) => {
       socket.emit("online users", onlineUsers);
     });
 
-    socket.on("send message", async ({ chatId, message }) => {
-      console.log("Message received:", message);
+    socket.on("send message", async ({ chatId, message, receiverPk }) => {
       const onlineUsers = users[chatId] || [];
 
-      console.log("Online users:", onlineUsers);
-
-      if (onlineUsers.length > 0) {
+      if (onlineUsers.length > 1) {
         // Eğer çevrimiçi kullanıcı varsa doğrudan ilet
         socket.to(chatId).emit("receive message", message);
       } else {
+        await sendMessageToUserQueue(chatId, receiverPk, message);
       }
     });
 
     socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
+      logger.info("User disconnected:", socket.id);
 
       for (const chatId in users) {
         // Ayrılan kullanıcının pubkey'ini bul
@@ -57,6 +74,25 @@ const setupSocket = (server) => {
           socket.to(chatId).emit("user offline", user.pubkey);
         }
       }
+    });
+
+    socket.on("create chat", (senderPublicKey, receiverPublicKey) => {
+      const timestamp = Date.now();
+      const payload = {
+        spk: senderPublicKey,
+        rpk: receiverPublicKey,
+        tms: timestamp,
+      };
+
+      // JWT oluşturma
+      const chatID = jwt.sign(payload, JWT_SECRET);
+
+      // Oluşturulan chat ID'yi istemciye gönder
+      socket.emit("chat created", {
+        chatId: chatID,
+        senderPublicKey: senderPublicKey,
+        receiverPubkey: receiverPublicKey,
+      });
     });
 
     socket.on("typing", (chatId, pubkey) => {

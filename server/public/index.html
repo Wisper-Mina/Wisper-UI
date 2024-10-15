@@ -10,7 +10,7 @@
     <!-- Chat Information -->
     <div id="chatInfo" class="chat-info">
       <p id="publicKeyDisplay"></p>
-      <p id="chatIdDisplay"></p>
+      <button id="chatIdCopy"><p id="chatIdDisplay"></p></button>
       <p id="receiverStatus"></p>
     </div>
     <div id="chat"></div>
@@ -23,9 +23,11 @@
         <div class="close-button-container">
           <span class="close-button" id="closeModal">&times;</span>
         </div>
-        <h2>Join Chat</h2>
+        <h2>Join or Create Chat</h2>
+
+        <!-- Public Key -->
         <label for="pubkey">
-          <span>Public Key:</span>
+          <span>Your Public Key:</span>
           <input
             type="text"
             id="pubkey"
@@ -33,11 +35,40 @@
             placeholder="Enter your Public Key"
           />
         </label>
-        <label for="chatId">
-          <span>Chat ID:</span>
-          <input type="text" id="chatId" required placeholder="Enter chat id" />
-        </label>
-        <button id="joinChatButton">Join Chat</button>
+
+        <!-- Chat Options -->
+        <div id="chatOptions">
+          <button id="joinChatButton">Join Chat</button>
+          <button id="createChatButton">Create Chat</button>
+        </div>
+
+        <!-- Join Chat Section -->
+        <div id="joinChatSection" style="display: none">
+          <label for="chatId">
+            <span>Chat ID:</span>
+            <input
+              type="text"
+              id="chatId"
+              required
+              placeholder="Enter Chat ID"
+            />
+          </label>
+          <button id="confirmJoinButton">Join Chat</button>
+        </div>
+
+        <!-- Create Chat Section -->
+        <div id="createChatSection" style="display: none">
+          <label for="receiverPubkey">
+            <span>Receiver Public Key:</span>
+            <input
+              type="text"
+              id="receiverPubkey"
+              required
+              placeholder="Enter receiver's Public Key"
+            />
+          </label>
+          <button id="confirmCreateButton">Create Chat</button>
+        </div>
       </div>
     </div>
 
