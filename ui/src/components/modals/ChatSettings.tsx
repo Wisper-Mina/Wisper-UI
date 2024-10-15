@@ -6,7 +6,6 @@ import { SettingsIcon } from "@/assets/svg/SettingsIcon";
 import { ShareIcon } from "@/assets/svg/ShareIcon";
 import TrashIcon from "@/assets/svg/trash.svg";
 import { APP_URL } from "@/lib/constants";
-import { toast } from "react-toastify";
 import { useAppDispatch } from "@/types/state";
 import { closeOverlay } from "@/redux/slices/overlaySlice";
 
@@ -39,10 +38,11 @@ export const ChatSettings = ({
       text: "Share Link",
       callback: () => {
         window.navigator.clipboard.writeText(chat_link_url);
-        toast.success("Copied !", {
-          position: "top-right",
-          autoClose: 2000,
-        });
+        //TODO: Implement toast
+        // toast.success("Copied !", {
+        //   position: "top-right",
+        //   autoClose: 2000,
+        // });
       },
     },
     {

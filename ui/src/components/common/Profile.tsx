@@ -14,7 +14,6 @@ import { DarkIcon } from "@/assets/svg/DarkIcon";
 import { LightIcon } from "@/assets/svg/LightIcon";
 import { closeOverlay, openOverlay } from "@/redux/slices/overlaySlice";
 import { deletePublicKeyCookie } from "@/redux/slices/session/thunk";
-import { toast } from "react-toastify";
 import { ShareIcon } from "@/assets/svg/ShareIcon";
 
 export const Profile = () => {
@@ -74,10 +73,11 @@ const ProfileDropdown = ({ closeDropdown }: { closeDropdown: () => void }) => {
   const handleShare = () => {
     if (!publicKeyBase58) return;
     window.navigator.clipboard.writeText(publicKeyBase58);
-    toast.success("Copied !", {
-      position: "top-right",
-      autoClose: 2000,
-    });
+    //TODO: Add toast
+    // toast.success("Copied !", {
+    //   position: "top-right",
+    //   autoClose: 2000,
+    // });
     closeDropdown();
   };
 

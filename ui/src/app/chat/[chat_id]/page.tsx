@@ -1,7 +1,7 @@
 import { ChatScreen } from "@/components/pages/Chat/ChatScreen";
 import { APP_URL } from "@/lib/constants";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const ChatPage = async ({
   params,
@@ -15,6 +15,7 @@ const ChatPage = async ({
   if (!publicKey) {
     return redirect("/home");
   }
+
   const res = await fetch(`${APP_URL}/api/chat_id/verify`, {
     method: "POST",
     body: JSON.stringify({
@@ -27,10 +28,10 @@ const ChatPage = async ({
     if (res?.data?.isJoinable) {
       return <ChatScreen chat_id={params?.chat_id} />;
     } else {
-      return redirect("/chat"); // TODO: Add unauthorized page
+      return redirect("/unauthorized"); // TODO: Add unauthorized page
     }
   }
-  return redirect("/chat");
+  return notFound();
 };
 
 export default ChatPage;

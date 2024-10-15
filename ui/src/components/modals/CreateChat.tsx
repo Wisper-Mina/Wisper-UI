@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 
-import { toast } from "react-toastify";
-
 import { CloseIcon } from "@/assets/svg/CloseIcon";
 import { ShareIcon } from "@/assets/svg/ShareIcon";
 import InformationCircle from "@/assets/svg/information-circle.svg";
@@ -109,10 +107,11 @@ const StartChat = ({ chat_id }: { chat_id: string }) => {
 
   const shareUrl = () => {
     window.navigator.clipboard.writeText(chat_link_url);
-    toast.success("Copied !", {
-      position: "top-right",
-      autoClose: 2000,
-    });
+    //TODO: Add toast
+    // toast.success("Copied !", {
+    //   position: "top-right",
+    //   autoClose: 2000,
+    // });
 
     close();
   };

@@ -2,8 +2,6 @@ import { useTheme } from "next-themes";
 import { useState } from "react";
 import Image from "next/image";
 
-import { toast } from "react-toastify";
-
 import { BackIcon } from "@/assets/svg/BackIcon";
 import { EditIcon } from "@/assets/svg/EditIcon";
 import { CancelIcon } from "@/assets/svg/CancelIcon";
@@ -54,10 +52,11 @@ export const SettingScreen = ({
 
   const handleSaveImage = () => {
     dispatch(setImage({ chatWith, image: selectedImage || "default" }));
-    toast.success("Image saved successfully", {
-      position: "top-right",
-      autoClose: 2000,
-    });
+    //TODO: Implement toast
+    // toast.success("Image saved successfully", {
+    //   position: "top-right",
+    //   autoClose: 2000,
+    // });
     setIsSettingsOpen(false);
   };
 
