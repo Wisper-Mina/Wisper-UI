@@ -28,7 +28,7 @@ export const ChatSettings = ({
 }) => {
   const { theme } = useTheme();
 
-  const chat_link_url = `${APP_URL}/chats/${chat_id}`;
+  const chat_link_url = `${APP_URL}/chat/${chat_id}`;
 
   const dispatch = useAppDispatch();
 

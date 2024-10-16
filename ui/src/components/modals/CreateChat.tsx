@@ -103,7 +103,7 @@ const StartChat = ({ chat_id }: { chat_id: string }) => {
 
   const chat_link = `wisper/chat/${chat_id}`;
 
-  const chat_link_url = `${APP_URL}/chats/${chat_id}`;
+  const chat_link_url = `${APP_URL}/chat/${chat_id}`;
 
   const shareUrl = () => {
     window.navigator.clipboard.writeText(chat_link_url);

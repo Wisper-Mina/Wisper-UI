@@ -37,7 +37,7 @@ interface DecodedChatID {
  * Decrypt a chat ID.
  * @param chatID
  * @param myPublicKey
- * @returns senderPublicKey,  isJoinable
+ * @returns senderPublicKey,  isJoinable, receiverPublicKey
  */
 export function decryptChatID(
   chatID: string,
@@ -45,6 +45,7 @@ export function decryptChatID(
 ): {
   senderPublicKey: string;
   isJoinable: boolean;
+  receiverPublicKey: string;
 } {
   try {
     if (JWT_SECRET === undefined) {
@@ -54,7 +55,11 @@ export function decryptChatID(
 
     const canJoin = decoded.rpk === myPublicKey || decoded.spk === myPublicKey;
 
-    return { senderPublicKey: decoded.spk, isJoinable: canJoin };
+    return {
+      senderPublicKey: decoded.spk,
+      isJoinable: canJoin,
+      receiverPublicKey: decoded.rpk,
+    };
   } catch (error) {
     throw new Error("Invalid chat ID  " + error);
   }

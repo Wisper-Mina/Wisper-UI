@@ -26,7 +26,12 @@ const ChatPage = async ({
 
   if (res?.status === 200) {
     if (res?.data?.isJoinable) {
-      return <ChatScreen chat_id={params?.chat_id} />;
+      return (
+        <ChatScreen
+          chat_id={params?.chat_id}
+          receiverPublicKey={res?.data?.receiverPublicKey}
+        />
+      );
     } else {
       return redirect("/unauthorized"); // TODO: Add unauthorized page
     }

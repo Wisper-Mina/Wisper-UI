@@ -15,13 +15,14 @@ export const ChatLayout = ({ children }: { children: React.ReactNode }) => {
     return <div>Loading...</div>;
   }
 
-  if (!chat || chat?.chats.length === 0) {
-    return (
-      <EntireScreen>
-        <StartChat />
-      </EntireScreen>
-    );
-  }
+  //TODO: move the page to the chat page
+  // if (!chat || chat?.chats.length === 0) {
+  //   return (
+  //     <EntireScreen>
+  //       <StartChat />
+  //     </EntireScreen>
+  //   );
+  // }
 
   if (pageWidth > 700) {
     return <DesktopView chat={chat}>{children}</DesktopView>;

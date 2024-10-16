@@ -16,6 +16,8 @@ interface ChatTopProps {
   username: string | null;
   image: string;
   setIsSettingsOpen: (value: boolean) => void;
+  isOnline: boolean;
+  isTyping: boolean;
 }
 
 export const ChatTop: FC<ChatTopProps> = ({
@@ -24,6 +26,8 @@ export const ChatTop: FC<ChatTopProps> = ({
   username,
   image,
   setIsSettingsOpen,
+  isOnline,
+  isTyping,
 }) => {
   const { theme } = useTheme();
 
@@ -53,15 +57,15 @@ export const ChatTop: FC<ChatTopProps> = ({
         <button onClick={() => router.back()} className="pr-4 mobile:hidden">
           <BackIcon theme={theme} />
         </button>
-        <div className="flex items-center gap-x-3">
+        <div className="flex items-stretch gap-x-3">
           <Image
             alt="user"
             src={`/users/${image}.svg`}
-            width={48}
-            height={48}
+            width={64}
+            height={64}
           />
           <div
-            className={`h-12 flex-1 py-1 flex flex-col ${
+            className={`h-12 flex-1 py-1 gap-y-1 flex flex-col ${
               username ? "justify-between " : "justify-center"
             }`}
           >
@@ -77,6 +81,26 @@ export const ChatTop: FC<ChatTopProps> = ({
             >
               {chatWith?.slice(0, 24) + "..." + chatWith?.slice(-12)}
             </p>
+            <div className="flex items-center gap-x-1">
+              {!isTyping && (
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isOnline ? "bg-green-500" : "bg-red-500"
+                  }`}
+                ></span>
+              )}
+              {isTyping ? (
+                <p className={`text-xs font-thin`}>Typing...</p>
+              ) : (
+                <p
+                  className={`text-xs font-thin ${
+                    isOnline ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {isOnline ? "Online" : "Offline"}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -2,8 +2,8 @@ import { useTheme } from "next-themes";
 
 import { RightArrowIcon } from "@/assets/svg/RightArrowIcon";
 import { useAppDispatch, useAppSelector } from "@/types/state";
-import { CreateChat } from "@/components/modals/CreateChat";
-import { openModal } from "@/redux/slices/modal/slice";
+import { closeModal, openModal } from "@/redux/slices/modal/slice";
+import { StartChatModal } from "@/components/modals/StartChatModal";
 
 export const StartChat = () => {
   const { theme } = useTheme();
@@ -15,7 +15,17 @@ export const StartChat = () => {
   const handleStartChat = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(openModal({ modal: <CreateChat /> }));
+    dispatch(
+      openModal({
+        modal: (
+          <StartChatModal
+            close={() => {
+              dispatch(closeModal());
+            }}
+          />
+        ),
+      })
+    );
   };
 
   return (

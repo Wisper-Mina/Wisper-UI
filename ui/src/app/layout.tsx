@@ -30,7 +30,10 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${roboto.className} ${sora.className}  antialiased`}>
+      <body
+        className={`${roboto.className} ${sora.className} antialiased`}
+        suppressHydrationWarning
+      >
         <MainProvider publicKey={publicKey?.value}>{children}</MainProvider>
       </body>
     </html>

@@ -27,3 +27,37 @@ export const createNewChat = createAsyncThunk(
     }
   }
 );
+
+export const joinChat = createAsyncThunk(
+  "chat/joinChat",
+  async (
+    data: {
+      chat_id: string;
+      publicKey: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await fetch("/api/chat_id/join", {
+        method: "POST",
+        body: JSON.stringify({
+          chat_id: data.chat_id,
+          publicKey: data.publicKey,
+        }),
+      }).then((r) => r.json());
+      if (res.status === 200) {
+        const chatWith =
+          data?.publicKey === res.data.senderPublicKey
+            ? res.data.receiverPublicKey
+            : res.data.senderPublicKey;
+        return {
+          chat_id: res.data.chat_id,
+          chatWith,
+        };
+      }
+      return rejectWithValue("Failed to join chat");
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);

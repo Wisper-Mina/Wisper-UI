@@ -11,6 +11,8 @@ export interface ChatType {
   unReadMessages: number; // Number of unread messages
   lastMessage: MessageType | null; // Last message in the chat
   messages: MessageType[];
+  receiperOnline: boolean;
+  receiperTyping: boolean;
 }
 
 export interface MessageType {

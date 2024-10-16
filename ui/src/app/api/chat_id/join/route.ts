@@ -1,19 +1,20 @@
 import { decryptChatID } from "@/utils/chatIdHandler";
 
 export async function POST(req: Request) {
-  const { chat_id, myPublicKey } = await req.json();
+  const { chat_id, publicKey } = await req.json();
 
   let res;
+
   try {
-    const { isJoinable, senderPublicKey, receiverPublicKey } = decryptChatID(
+    const { receiverPublicKey, senderPublicKey } = decryptChatID(
       chat_id,
-      myPublicKey
+      publicKey
     );
     res = {
       data: {
-        receiverPublicKey:
-          myPublicKey === senderPublicKey ? receiverPublicKey : senderPublicKey,
-        isJoinable,
+        chat_id,
+        receiverPublicKey,
+        senderPublicKey,
       },
       status: 200,
     };

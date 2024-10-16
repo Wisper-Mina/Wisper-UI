@@ -8,7 +8,15 @@ import { SettingScreen } from "../../SettingScreen";
 import { useAppDispatch } from "@/types/state";
 import { clearUnReadMessages } from "@/redux/slices/chat/slice";
 
-const ChatDesktop = ({ chat }: { chat: ChatType }) => {
+const ChatDesktop = ({
+  chat,
+  userTyping,
+  sendMessageToSocket,
+}: {
+  chat: ChatType;
+  userTyping: (isTyping: boolean) => void;
+  sendMessageToSocket: (message: string) => void;
+}) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
@@ -27,13 +35,19 @@ const ChatDesktop = ({ chat }: { chat: ChatType }) => {
             <ChatTop
               id={chat.id}
               chatWith={chat.chatWith}
+              isOnline={chat.receiperOnline}
               username={chat.username}
               image={chat.image}
               setIsSettingsOpen={setIsSettingsOpen}
+              isTyping={chat.receiperTyping}
             />
           </div>
           <MessageList messages={chat?.messages} />
-          <ChatInput chatWith={chat?.chatWith} />
+          <ChatInput
+            chatWith={chat?.chatWith}
+            userTyping={userTyping}
+            sendMessageToSocket={sendMessageToSocket}
+          />
         </>
       )}
       {isSettingsOpen && (

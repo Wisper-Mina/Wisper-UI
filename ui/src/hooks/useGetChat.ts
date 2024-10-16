@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
 
+import { io } from "socket.io-client";
+
 import { setChat } from "@/redux/slices/chat/slice";
 import { ChatType } from "@/types/messages";
 import { useAppDispatch, useAppSelector } from "@/types/state";
-import { dummyChat } from "@/redux/slices/chat/dummy";
 
 export const useGetChat = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
+
+  const pubkey = useAppSelector((state) => state.session.publicKeyBase58);
+
+  useEffect(() => {
+    const socket = io(process.env.NEXT_PUBLIC_SERVER_URL as string);
+
+    if (!pubkey) {
+      return;
+    }
+    socket.emit("join app", pubkey);
+    socket.on("receive chat", (data: any) => {
+      console.log(data);
+    });
+  }, [pubkey]);
 
   const chat = useAppSelector((state) => state.chat);
 
@@ -39,8 +54,6 @@ export const useGetChat = () => {
       // Save the merged chat to the redux store
       dispatch(setChat({ chats: mergedChat }));
       // dispatch(setChat(dummyChat));
-    } catch (e) {
-      // Handle the error
     } finally {
       setLoading(false);
     }
