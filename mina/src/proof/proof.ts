@@ -1,7 +1,7 @@
 import {
   Poseidon,
   SelfProof,
-  ZkProgram,
+  ZkProgram
 } from 'o1js';
 import { MessageProof } from '../structs/MessageProof';
 import { PrivateInputs } from '../structs/PrivateInputs';
