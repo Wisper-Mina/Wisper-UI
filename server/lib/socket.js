@@ -134,8 +134,10 @@ const setupSocket = async (server) => {
           }
         }
         if (user_online) {
+          console.log(senderPk, receiverPk, message, chatId);
           socket.to(chatId).emit("receive message", {
             message,
+            senderPk,
             receiverPk,
             chatId,
           });

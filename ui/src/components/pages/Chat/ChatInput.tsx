@@ -3,19 +3,24 @@ import React, { useState } from "react";
 import { useTheme } from "next-themes";
 
 import { UpIcon } from "@/assets/svg/UpIcon";
-import { useAppDispatch } from "@/types/state";
+import { useAppDispatch, useAppSelector } from "@/types/state";
 import { setNewMessage } from "@/redux/slices/chat/slice";
+import {
+  sendMessageSocket,
+  userStopTyping,
+  userTyping,
+} from "@/redux/slices/socket/slice";
 
 export const ChatInput = ({
   chatWith,
-  userTyping,
-  sendMessageToSocket,
+  chat_id,
 }: {
   chatWith: string | null;
-  userTyping: (isTyping: boolean) => void;
-  sendMessageToSocket: (message: string) => void;
+  chat_id: string;
 }) => {
   const [message, setMessage] = useState<string>("");
+
+  const typerPk = useAppSelector((state) => state.session.publicKeyBase58);
 
   const dispatch = useAppDispatch();
 
@@ -28,14 +33,26 @@ export const ChatInput = ({
   const sendMessage = () => {
     if (!message) return;
     dispatch(setNewMessage({ chatWith, newMessage: message }));
-    sendMessageToSocket(message);
+    dispatch(
+      sendMessageSocket({
+        senderPk: typerPk ?? "",
+        chatId: chat_id,
+        message: message,
+        receiver58: chatWith,
+      })
+    );
     setMessage("");
-    userTyping(false);
+    dispatch(
+      userStopTyping({
+        chat_id: chat_id,
+        stopperPk: typerPk ?? "",
+      })
+    );
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Enter'ın varsayılan davranışını engelle (form submit gibi)
+      e.preventDefault();
       sendMessage();
     }
   };
@@ -51,7 +68,18 @@ export const ChatInput = ({
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
-            userTyping(!!e.target.value);
+            if (!!e.target.value) {
+              dispatch(
+                userTyping({ typerPk: typerPk ?? "", chat_id: chat_id })
+              );
+            } else {
+              dispatch(
+                userStopTyping({
+                  chat_id: chat_id,
+                  stopperPk: typerPk ?? "",
+                })
+              );
+            }
           }}
           onKeyDown={handleKeyDown}
         />

@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "@/types/state";
 import { createNewChat } from "@/redux/slices/chat/thunk";
 import { closeModal } from "@/redux/slices/modal/slice";
 import { usePageWidth } from "@/hooks/usePageWidth";
+import { createChat as createChatSocket } from "@/redux/slices/socket/slice";
 
 export const CreateChat = () => {
   const [state, setState] = useState<"create" | "start">("create");
@@ -31,6 +32,12 @@ export const CreateChat = () => {
       if (!res?.error) {
         setChatId(res?.payload?.chat_id);
         setState("start");
+        dispatch(
+          createChatSocket({
+            createrPk: publicKeyBase58,
+            chat_id: res?.payload?.chat_id,
+          })
+        );
       }
     });
   };

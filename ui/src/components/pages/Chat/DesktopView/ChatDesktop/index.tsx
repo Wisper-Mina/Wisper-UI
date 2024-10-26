@@ -8,15 +8,7 @@ import { SettingScreen } from "../../SettingScreen";
 import { useAppDispatch } from "@/types/state";
 import { clearUnReadMessages } from "@/redux/slices/chat/slice";
 
-const ChatDesktop = ({
-  chat,
-  userTyping,
-  sendMessageToSocket,
-}: {
-  chat: ChatType;
-  userTyping: (isTyping: boolean) => void;
-  sendMessageToSocket: (message: string) => void;
-}) => {
+const ChatDesktop = ({ chat }: { chat: ChatType }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
@@ -25,6 +17,7 @@ const ChatDesktop = ({
     if (!!chat?.chatWith) {
       dispatch(clearUnReadMessages({ chatWith: chat.chatWith }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -43,11 +36,7 @@ const ChatDesktop = ({
             />
           </div>
           <MessageList messages={chat?.messages} />
-          <ChatInput
-            chatWith={chat?.chatWith}
-            userTyping={userTyping}
-            sendMessageToSocket={sendMessageToSocket}
-          />
+          <ChatInput chatWith={chat?.chatWith} chat_id={chat.id} />
         </>
       )}
       {isSettingsOpen && (
