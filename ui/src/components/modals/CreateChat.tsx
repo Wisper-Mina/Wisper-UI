@@ -17,6 +17,7 @@ import { usePageWidth } from "@/hooks/usePageWidth";
 import { createChat as createChatSocket } from "@/redux/slices/socket/slice";
 import { PrivateKey } from "o1js";
 import { SignMessageArgs, SignedResponse } from "@/types/auro";
+import toast from "react-hot-toast";
 
 export const CreateChat = () => {
   const [state, setState] = useState<"create" | "start">("create");
@@ -141,12 +142,9 @@ const StartChat = ({ chat_id }: { chat_id: string }) => {
 
   const shareUrl = () => {
     window.navigator.clipboard.writeText(chat_link_url);
-    //TODO: Add toast
-    // toast.success("Copied !", {
-    //   position: "top-right",
-    //   autoClose: 2000,
-    // });
-
+    toast.success("Copied to clipboard!", {
+      position: "top-right",
+    });
     close();
   };
 

@@ -8,6 +8,7 @@ import { CancelIcon } from "@/assets/svg/CancelIcon";
 import { useAppDispatch } from "@/types/state";
 import { setImage, setUsername } from "@/redux/slices/chat/slice";
 import { ImageType } from "@/types/messages";
+import toast from "react-hot-toast";
 
 interface SettingScreenProps {
   setIsSettingsOpen: (value: boolean) => void;
@@ -52,11 +53,10 @@ export const SettingScreen = ({
 
   const handleSaveImage = () => {
     dispatch(setImage({ chatWith, image: selectedImage || "default" }));
-    //TODO: Implement toast
-    // toast.success("Image saved successfully", {
-    //   position: "top-right",
-    //   autoClose: 2000,
-    // });
+    toast.success("Image saved successfully!", {
+      position: "top-right",
+    });
+
     setIsSettingsOpen(false);
   };
 

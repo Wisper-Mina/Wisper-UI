@@ -8,6 +8,7 @@ import TrashIcon from "@/assets/svg/trash.svg";
 import { APP_URL } from "@/lib/constants";
 import { useAppDispatch } from "@/types/state";
 import { closeOverlay } from "@/redux/slices/overlaySlice";
+import toast from "react-hot-toast";
 
 interface ChatSettingsProps {
   icon: React.ReactNode;
@@ -38,11 +39,9 @@ export const ChatSettings = ({
       text: "Share Link",
       callback: () => {
         window.navigator.clipboard.writeText(chat_link_url);
-        //TODO: Implement toast
-        // toast.success("Copied !", {
-        //   position: "top-right",
-        //   autoClose: 2000,
-        // });
+        toast.success("Copied to clipboard!", {
+          position: "top-right",
+        });
       },
     },
     {

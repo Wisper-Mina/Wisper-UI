@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export const Settings = () => {
   const router = useRouter();
@@ -28,11 +29,9 @@ export const Settings = () => {
 
   const handleSaveImage = () => {
     dispatch(setImage(selectedImage));
-    //TODO: Implement toast
-    // toast.success("Image saved successfully", {
-    //   position: "top-right",
-    //   autoClose: 2000,
-    // });
+    toast.success("Image saved successfully!", {
+      position: "top-right",
+    });
   };
   return (
     <div className="p-6 flex flex-col">

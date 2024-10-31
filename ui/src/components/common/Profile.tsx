@@ -4,6 +4,8 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import toast from "react-hot-toast";
+
 import { DownIcon } from "@/assets/svg/DownIcon";
 import { useAppDispatch, useAppSelector } from "@/types/state";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
@@ -73,11 +75,11 @@ const ProfileDropdown = ({ closeDropdown }: { closeDropdown: () => void }) => {
   const handleShare = () => {
     if (!publicKeyBase58) return;
     window.navigator.clipboard.writeText(publicKeyBase58);
-    //TODO: Add toast
-    // toast.success("Copied !", {
-    //   position: "top-right",
-    //   autoClose: 2000,
-    // });
+
+    toast.success("Copied to clipboard!", {
+      position: "top-right",
+    });
+
     closeDropdown();
   };
 
