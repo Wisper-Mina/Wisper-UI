@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import zkAppReducer from "./slices/zkApp/slice";
 import chatReducer from "./slices/chat/slice";
 import overlayReducer from "./slices/overlaySlice";
 import sessionReducer from "./slices/session/slice";
@@ -10,7 +9,6 @@ import socketReducer from "./slices/socket/slice";
 // Store'u yapılandır
 export const store = configureStore({
   reducer: {
-    zkApp: zkAppReducer,
     session: sessionReducer,
     chat: chatReducer,
     overlay: overlayReducer,

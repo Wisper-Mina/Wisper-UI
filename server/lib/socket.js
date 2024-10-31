@@ -71,7 +71,7 @@ const setupSocket = async (server) => {
      * @returns emit online status to the other users
      * @returns send online status to the user
      */
-    socket.on("create chat", (createrPk, chat_id) => {
+    socket.on("create chat", (createrPk, chat_id, createrSignResult) => {
       logger.info(`User ${createrPk} created chat: ${chat_id}`);
       if (!users[chat_id]) {
         users[chat_id] = [];
@@ -80,7 +80,11 @@ const setupSocket = async (server) => {
         logger.info(`User ${createrPk} is already in chat: ${chat_id}`);
         return;
       }
-      users[chat_id].push({ socketId: socket.id, pubkey: createrPk });
+      users[chat_id].push({
+        socketId: socket.id,
+        pubkey: createrPk,
+        createrSignResult,
+      });
       socket.join(chat_id);
       const onlineUsers = users[chat_id].map((user) => user.pubkey);
       socket.to(chat_id).emit("user online", createrPk);
@@ -111,7 +115,7 @@ const setupSocket = async (server) => {
       socket.join(chat_id);
       const onlineUsers = users[chat_id].map((user) => user.pubkey);
       socket.to(chat_id).emit("user online", joinerPk);
-      // socket.emit("online users", onlineUsers);
+      socket.emit("online users", onlineUsers);
     });
 
     /**
@@ -152,7 +156,7 @@ const setupSocket = async (server) => {
      */
     socket.on("disconnect", () => {
       logger.info("User disconnected:", socket.id);
-
+      console.log("1", users);
       for (const chatId in users) {
         const user = users[chatId].find((user) => user.socketId === socket.id);
         if (user) {

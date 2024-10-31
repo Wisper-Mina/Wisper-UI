@@ -9,9 +9,14 @@ import { createNewChat, joinChat } from "./thunk";
 
 const initialState: ChatResponse = {
   chats: [],
+  pubKey58: "",
 };
 
-const saveToLocalStorage = (chats: ChatType[]) => {
+const saveToLocalStorage = (
+  pubKey58: string,
+  chats: ChatType[],
+  signingPrivateKey58?: string
+) => {
   const chatsToSave = chats.map((chat) => {
     return {
       ...chat,
@@ -19,13 +24,30 @@ const saveToLocalStorage = (chats: ChatType[]) => {
       receiperTyping: false,
     };
   });
-  localStorage.setItem("chats", JSON.stringify(chatsToSave));
+
+  const localStore = localStorage.getItem(`chat-${pubKey58}`);
+  if (localStore) {
+    const localData = JSON.parse(localStore);
+    if (localData.signingPrivateKey58) {
+      signingPrivateKey58 = localData.signingPrivateKey58;
+    }
+  }
+
+  const saveData = {
+    pubKey58,
+    chats: chatsToSave,
+    signingPrivateKey58: signingPrivateKey58 ?? "",
+  };
+  localStorage.setItem(`chat-${pubKey58}`, JSON.stringify(saveData));
 };
 
 export const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {
+    setUserPubKey: (state, action: PayloadAction<string>) => {
+      state.pubKey58 = action.payload;
+    },
     setChat: (state, action: PayloadAction<ChatResponse>) => {
       state.chats = action.payload.chats;
     },
@@ -40,7 +62,7 @@ export const chatSlice = createSlice({
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         chat.username = username;
-        saveToLocalStorage(state.chats);
+        saveToLocalStorage(state.pubKey58, state.chats);
       }
     },
     setImage: (
@@ -54,7 +76,7 @@ export const chatSlice = createSlice({
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         chat.image = image;
-        saveToLocalStorage(state.chats);
+        saveToLocalStorage(state.pubKey58, state.chats);
       }
     },
     setNewMessage: (
@@ -77,7 +99,7 @@ export const chatSlice = createSlice({
         };
         chat?.messages.push(message);
         chat.lastMessage = message;
-        saveToLocalStorage(state.chats);
+        saveToLocalStorage(state.pubKey58, state.chats);
       }
     },
     getNewMessage: (
@@ -85,6 +107,7 @@ export const chatSlice = createSlice({
       action: PayloadAction<{
         chatWith: string;
         newMessage: string;
+        unRead: boolean;
       }>
     ) => {
       const { chatWith, newMessage } = action.payload;
@@ -100,9 +123,10 @@ export const chatSlice = createSlice({
         };
         chat?.messages.push(message);
         chat.lastMessage = message;
-        //TODO: add if user in chat page then don't increase unReadMessages
-        chat.unReadMessages += 1;
-        saveToLocalStorage(state.chats);
+        if (action.payload.unRead) {
+          chat.unReadMessages += 1;
+        }
+        saveToLocalStorage(state.pubKey58, state.chats);
       }
     },
     clearUnReadMessages: (
@@ -115,7 +139,7 @@ export const chatSlice = createSlice({
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         chat.unReadMessages = 0;
-        saveToLocalStorage(state.chats);
+        saveToLocalStorage(state.pubKey58, state.chats);
       }
     },
     setReceiverOnline: (
@@ -160,7 +184,11 @@ export const chatSlice = createSlice({
           receiperTyping: false,
         };
         state.chats.push(newChat);
-        saveToLocalStorage(state.chats);
+        saveToLocalStorage(
+          action.payload.senderPublicKey,
+          state.chats,
+          action.payload.signingPrivateKey
+        );
       })
       .addCase(joinChat.fulfilled, (state, action) => {
         const isChatExist = state.chats.find(
@@ -179,7 +207,7 @@ export const chatSlice = createSlice({
           receiperTyping: false,
         };
         state.chats.push(newChat);
-        saveToLocalStorage(state.chats);
+        saveToLocalStorage(state.pubKey58, state.chats);
       });
   },
 });
@@ -193,6 +221,7 @@ export const {
   setReceiverOnline,
   setReceiverTyping,
   getNewMessage,
+  setUserPubKey,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

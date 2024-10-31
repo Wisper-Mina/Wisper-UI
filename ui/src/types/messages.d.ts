@@ -1,5 +1,6 @@
 export interface ChatResponse {
   chats: ChatType[];
+  pubKey58: string;
 }
 
 export interface ChatType {

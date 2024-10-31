@@ -15,6 +15,8 @@ import { createNewChat } from "@/redux/slices/chat/thunk";
 import { closeModal } from "@/redux/slices/modal/slice";
 import { usePageWidth } from "@/hooks/usePageWidth";
 import { createChat as createChatSocket } from "@/redux/slices/socket/slice";
+import { PrivateKey } from "o1js";
+import { SignMessageArgs, SignedResponse } from "@/types/auro";
 
 export const CreateChat = () => {
   const [state, setState] = useState<"create" | "start">("create");
@@ -24,10 +26,34 @@ export const CreateChat = () => {
   const dispatch = useAppDispatch();
 
   const { publicKeyBase58 } = useAppSelector((state) => state.session);
-  const createChat = (receipientPublicKey: string) => {
+  const createChat = async (receipientPublicKey: string) => {
     if (!publicKeyBase58) return;
+    const mina = window.mina;
+
+    if (mina == null) {
+      return;
+    }
+
+    const signingPrivateKey = PrivateKey.random(); // Generate a random private key
+    const signingPublicKey = signingPrivateKey.toPublicKey().toBase58(); // Get the public key from the private key
+
+    const signContent: SignMessageArgs = {
+      message: signingPublicKey,
+    };
+
+    const signResult: SignedResponse = await window.mina
+      ?.signMessage(signContent)
+      .catch((err: any) => {
+        console.log(err);
+        return;
+      });
+
     dispatch(
-      createNewChat({ senderPublicKey: publicKeyBase58, receipientPublicKey })
+      createNewChat({
+        senderPublicKey: publicKeyBase58,
+        receipientPublicKey,
+        signingPrivateKey: signingPrivateKey.toBase58(),
+      })
     ).then((res: any) => {
       if (!res?.error) {
         setChatId(res?.payload?.chat_id);
@@ -36,6 +62,7 @@ export const CreateChat = () => {
           createChatSocket({
             createrPk: publicKeyBase58,
             chat_id: res?.payload?.chat_id,
+            signResult: signResult,
           })
         );
       }

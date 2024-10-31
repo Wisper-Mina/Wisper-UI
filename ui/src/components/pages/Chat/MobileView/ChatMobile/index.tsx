@@ -39,10 +39,12 @@ const ChatMobile = ({ chat }: { chat: ChatType }) => {
           username={chat.username}
           image={chat.image}
           setIsSettingsOpen={setIsSettingsOpen}
+          isOnline={chat.receiperOnline}
+          isTyping={chat.receiperTyping}
         />
       </div>
       <MessageList messages={chat?.messages} />
-      <ChatInput chatWith={chat?.chatWith} />
+      <ChatInput chatWith={chat?.chatWith} chat_id={chat?.id} />
     </div>
   );
 };

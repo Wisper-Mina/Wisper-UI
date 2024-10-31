@@ -6,6 +6,7 @@ export const createNewChat = createAsyncThunk(
     data: {
       senderPublicKey: string;
       receipientPublicKey: string;
+      signingPrivateKey: string;
     },
     { rejectWithValue }
   ) => {
@@ -19,7 +20,11 @@ export const createNewChat = createAsyncThunk(
         }),
       }).then((r) => r.json());
       if (res.status === 200) {
-        return res?.data;
+        return {
+          ...res?.data,
+          senderPublicKey: data.senderPublicKey,
+          signingPrivateKey: data.signingPrivateKey,
+        };
       }
       return rejectWithValue("Failed to create chat");
     } catch (error) {

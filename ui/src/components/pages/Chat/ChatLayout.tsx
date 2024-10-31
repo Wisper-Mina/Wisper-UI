@@ -3,8 +3,8 @@
 import { useGetChat } from "@/hooks/useGetChat";
 import { usePageWidth } from "@/hooks/usePageWidth";
 import DesktopView from "./DesktopView";
-import { EntireScreen } from "@/components/common/EntireScreen";
-import { StartChat } from "./StartChat";
+// import { EntireScreen } from "@/components/common/EntireScreen";
+// import { StartChat } from "./StartChat";
 
 export const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   const pageWidth = usePageWidth();

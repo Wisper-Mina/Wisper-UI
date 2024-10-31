@@ -17,6 +17,8 @@ export const ChatList = () => {
             image: chat.image,
             unReadMessages: chat.unReadMessages,
             lastMessage: chat.lastMessage,
+            receiperOnline: chat.receiperOnline,
+            receiperTyping: chat.receiperTyping,
           }}
         />
       ))}

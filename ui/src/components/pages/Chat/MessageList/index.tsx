@@ -11,7 +11,7 @@ const MessageList = ({ messages }: { messages: MessageType[] }) => {
   }, [messages]);
 
   return (
-    <div className="mobile:max-h-[calc(100%_-_180px)] mobile:h-[calc(100%_-_180px)] max-h-[calc(100%_-_190px)] h-[calc(100%_-_190px)] gap-y-1 px-6 overflow-auto flex flex-col-reverse font-sora">
+    <div className="mobile:max-h-[calc(100%_-_180px)] mobile:h-[calc(100%_-_180px)] max-h-[calc(100%_-_200px)] h-[calc(100%_-_190px)] gap-y-1 px-6 overflow-auto flex flex-col-reverse font-sora">
       {showMessages?.map((message) => (
         <Message key={message.id} message={message} />
       ))}

@@ -2,9 +2,20 @@
 import { useTheme } from "next-themes";
 
 import { MainLogoSvg } from "@/assets/svg/MainLogoSvg";
+import { useRouter } from "next/navigation";
 
 export const MainLogo = () => {
   const { theme } = useTheme();
 
-  return <MainLogoSvg theme={theme} />;
+  const router = useRouter();
+
+  const goToHome = () => {
+    router.push("/");
+  };
+
+  return (
+    <button onClick={goToHome}>
+      <MainLogoSvg theme={theme} />
+    </button>
+  );
 };

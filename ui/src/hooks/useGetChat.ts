@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { setChat } from "@/redux/slices/chat/slice";
 import { ChatType } from "@/types/messages";
@@ -9,28 +9,34 @@ export const useGetChat = () => {
 
   const dispatch = useAppDispatch();
 
-  const pubkey = useAppSelector((state) => state.session.publicKeyBase58);
+  const pubKey58 = useAppSelector((state) => state.session.publicKeyBase58);
 
   const chat = useAppSelector((state) => state.chat);
 
-  const getChatFromLocalStorage = (): ChatType[] => {
-    const chats = localStorage.getItem("chats");
-    const storedChat = chats ? JSON.parse(chats) : [];
+  const getChatFromLocalStorage = useCallback(() => {
+    if (!pubKey58) return [];
+    const user_chat = localStorage.getItem(`chat-${pubKey58}`);
+    const storedChat = user_chat
+      ? JSON.parse(user_chat)
+      : {
+          chats: [],
+        };
 
-    return storedChat;
-  };
+    return storedChat?.chats;
+  }, [pubKey58]);
 
-  const getChatFromSocket = () => {
+  const getChatFromQueue = () => {
     const socketChat: ChatType[] = [];
     return socketChat;
   };
 
-  const saveChatToRedux = () => {
+  const saveChatToRedux = useCallback(() => {
+    if (!pubKey58) return;
     setLoading(true);
     try {
       const storedChat = getChatFromLocalStorage();
 
-      const socketChat = getChatFromSocket();
+      const socketChat = getChatFromQueue();
 
       // TODO: check if the chat already exists in the stored chat
 
@@ -38,16 +44,18 @@ export const useGetChat = () => {
       const mergedChat = [...storedChat, ...socketChat];
 
       // Save the merged chat to the redux store
-      dispatch(setChat({ chats: mergedChat }));
+      dispatch(setChat({ chats: mergedChat, pubKey58: pubKey58 }));
       // dispatch(setChat(dummyChat));
     } finally {
       setLoading(false);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubKey58]);
 
   useEffect(() => {
     saveChatToRedux();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubKey58]);
 
   return {
     chat,

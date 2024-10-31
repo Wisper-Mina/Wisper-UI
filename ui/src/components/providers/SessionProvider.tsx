@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import { useAppDispatch, useAppSelector } from "@/types/state";
 import { setImage, setPublicKey } from "@/redux/slices/session/slice";
@@ -15,6 +15,7 @@ import {
   getNewMessage,
   setReceiverOnline,
   setReceiverTyping,
+  setUserPubKey,
 } from "@/redux/slices/chat/slice";
 
 export const SessionProvider = ({
@@ -30,6 +31,14 @@ export const SessionProvider = ({
   const publicKey58 = useAppSelector((state) => state.session.publicKeyBase58);
 
   const socket = useAppSelector((state) => state.socket.socket);
+
+  const params = useParams<{ chat_id: string }>();
+
+  const terminateOfflineChat = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const offlineChats = chats.filter((chat) => !chat.receiperOnline);
+    // TODO: terminate offline chats
+  }, [chats]);
 
   useEffect(() => {
     if (!publicKey58) {
@@ -64,8 +73,29 @@ export const SessionProvider = ({
     socket?.on("user offline", (offlinePk: string) => {
       dispatch(setReceiverOnline({ chatWith: offlinePk, isOnline: false }));
     });
+    return () => {
+      socket.off("online users");
+      socket.off("user online");
+      socket.off("user offline");
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: any) => {
+      terminateOfflineChat();
+      const message = "Sayfadan ayrılmak üzeresiniz!";
+      event.returnValue = message;
+      return message;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chats]);
 
   useEffect(() => {
     if (!socket) {
@@ -121,9 +151,17 @@ export const SessionProvider = ({
       return;
     }
     socket?.on("receive message", (data: any) => {
+      let unRead = false;
+      if (!params || !params.chat_id || params.chat_id !== data?.chatId) {
+        unRead = true;
+      }
       if (data?.receiverPk === publicKey58) {
         dispatch(
-          getNewMessage({ chatWith: data?.senderPk, newMessage: data.message })
+          getNewMessage({
+            chatWith: data?.senderPk,
+            newMessage: data.message,
+            unRead,
+          })
         );
       }
     });
@@ -133,6 +171,7 @@ export const SessionProvider = ({
   useEffect(() => {
     if (publicKey) {
       dispatch(setPublicKey(publicKey));
+      dispatch(setUserPubKey(publicKey));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);

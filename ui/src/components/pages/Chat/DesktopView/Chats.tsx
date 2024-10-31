@@ -28,6 +28,8 @@ export const Chats = ({ chats }: ChatsProps) => {
               image: chat.image,
               unReadMessages: chat.unReadMessages,
               lastMessage: chat.lastMessage,
+              receiperOnline: chat.receiperOnline,
+              receiperTyping: chat.receiperTyping,
             }}
           />
         ))}
