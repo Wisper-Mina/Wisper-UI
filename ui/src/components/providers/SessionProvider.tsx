@@ -12,6 +12,7 @@ import {
 import { ImageType } from "@/types/messages";
 import { initSocket } from "@/redux/slices/socket/slice";
 import {
+  deleteChat,
   getNewMessage,
   setReceiverOnline,
   setReceiverTyping,
@@ -36,8 +37,15 @@ export const SessionProvider = ({
 
   const terminateOfflineChat = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const offlineChats = chats.filter((chat) => !chat.receiperOnline);
-    // TODO: terminate offline chats
+    const offlineChats = chats
+      .filter((chat) => !chat.receiperOnline)
+      .map((chat) => chat.id);
+    dispatch(
+      deleteChat({
+        offlineChats,
+      })
+    );
+    // TODO: terminate offline chat
   }, [chats]);
 
   useEffect(() => {

@@ -168,6 +168,18 @@ export const chatSlice = createSlice({
         chat.receiperTyping = isTyping;
       }
     },
+    deleteChat: (
+      state,
+      action: PayloadAction<{
+        offlineChats: string[];
+      }>
+    ) => {
+      const { offlineChats } = action.payload;
+      state.chats = state.chats.filter(
+        (chat) => !offlineChats.includes(chat.id)
+      );
+      saveToLocalStorage(state.pubKey58, state.chats);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -222,6 +234,7 @@ export const {
   setReceiverTyping,
   getNewMessage,
   setUserPubKey,
+  deleteChat,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
