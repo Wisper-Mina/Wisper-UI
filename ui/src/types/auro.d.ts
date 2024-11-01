@@ -13,7 +13,7 @@ interface ProviderError extends Error {
   data?: unknown;
 }
 
-type SignedResponse = SignedData | ProviderError;
+type SignedResponse = SignedData | ProviderError | null;
 
 type SignMessageArgs = {
   message: string;

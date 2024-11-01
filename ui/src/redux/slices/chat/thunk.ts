@@ -1,3 +1,4 @@
+import { SignedResponse } from "@/types/auro";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const createNewChat = createAsyncThunk(
@@ -7,6 +8,7 @@ export const createNewChat = createAsyncThunk(
       senderPublicKey: string;
       receipientPublicKey: string;
       signingPrivateKey: string;
+      signResult: SignedResponse;
     },
     { rejectWithValue }
   ) => {
@@ -23,6 +25,7 @@ export const createNewChat = createAsyncThunk(
           ...res?.data,
           senderPublicKey: data.senderPublicKey,
           signingPrivateKey: data.signingPrivateKey,
+          signResult: data.signResult,
         };
       }
       return rejectWithValue("Failed to create chat");

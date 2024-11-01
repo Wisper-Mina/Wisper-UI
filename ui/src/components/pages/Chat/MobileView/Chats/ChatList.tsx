@@ -11,14 +11,7 @@ export const ChatList = () => {
           chat={{
             isSelected: false,
             isLastChat: index === chats.length - 1,
-            id: chat.id,
-            chatWith: chat.chatWith,
-            username: chat.username,
-            image: chat.image,
-            unReadMessages: chat.unReadMessages,
-            lastMessage: chat.lastMessage,
-            receiperOnline: chat.receiperOnline,
-            receiperTyping: chat.receiperTyping,
+            ...chat,
           }}
         />
       ))}

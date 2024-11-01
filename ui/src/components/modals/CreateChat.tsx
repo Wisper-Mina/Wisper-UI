@@ -15,10 +15,9 @@ import { createNewChat } from "@/redux/slices/chat/thunk";
 import { closeModal } from "@/redux/slices/modal/slice";
 import { usePageWidth } from "@/hooks/usePageWidth";
 import { createChat as createChatSocket } from "@/redux/slices/socket/slice";
-import { PrivateKey } from "o1js";
-import { SignMessageArgs, SignedResponse } from "@/types/auro";
 import toast from "react-hot-toast";
 import { isValidMinaAddress } from "@/utils/isValidAddress";
+import { createNewKP } from "@/utils/createNewKP";
 
 export const CreateChat = () => {
   const [state, setState] = useState<"create" | "start">("create");
@@ -31,44 +30,30 @@ export const CreateChat = () => {
   const createChat = async (receipientPublicKey: string) => {
     if (!publicKeyBase58) return;
     if (isValidMinaAddress(receipientPublicKey)) {
-      const mina = window.mina;
-
-      if (mina == null) {
-        return;
-      }
-
-      const signingPrivateKey = PrivateKey.random(); // Generate a random private key
-      const signingPublicKey = signingPrivateKey.toPublicKey().toBase58(); // Get the public key from the private key
-
-      const signContent: SignMessageArgs = {
-        message: signingPublicKey,
-      };
-
-      const signResult: SignedResponse = await window.mina
-        ?.signMessage(signContent)
-        .catch((err: any) => {
-          console.log(err);
+      createNewKP().then((res) => {
+        if (!res) {
           return;
-        });
-
-      dispatch(
-        createNewChat({
-          senderPublicKey: publicKeyBase58,
-          receipientPublicKey,
-          signingPrivateKey: signingPrivateKey.toBase58(),
-        })
-      ).then((res: any) => {
-        if (!res?.error) {
-          setChatId(res?.payload?.chat_id);
-          setState("start");
-          dispatch(
-            createChatSocket({
-              createrPk: publicKeyBase58,
-              chat_id: res?.payload?.chat_id,
-              signResult: signResult,
-            })
-          );
         }
+        const { signingPrivateKey58, signResult } = res;
+        dispatch(
+          createNewChat({
+            senderPublicKey: publicKeyBase58,
+            receipientPublicKey,
+            signingPrivateKey: signingPrivateKey58,
+            signResult,
+          })
+        ).then((res: any) => {
+          if (!res?.error) {
+            setChatId(res?.payload?.chat_id);
+            setState("start");
+            dispatch(
+              createChatSocket({
+                createrPk: publicKeyBase58,
+                chat_id: res?.payload?.chat_id,
+              })
+            );
+          }
+        });
       });
     } else {
       toast.error("Invalid Mina Address", {

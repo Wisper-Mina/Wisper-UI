@@ -1,3 +1,5 @@
+import { SignedResponse } from "./auro";
+
 export interface ChatResponse {
   chats: ChatType[];
   pubKey58: string;
@@ -5,7 +7,7 @@ export interface ChatResponse {
 
 export interface ChatType {
   id: string; // Chat id
-  // type: "active" | "terminated" | "deleted"; // Chat type
+  type: "active" | "terminated" | "deleted"; // Chat type
   chatWith: string | null; // Public key base 58 of the chat partner
   username: string | null; // Username of the chat partner
   image: ImageType; // Image of the chat partner
@@ -14,6 +16,9 @@ export interface ChatType {
   messages: MessageType[];
   receiperOnline: boolean;
   receiperTyping: boolean;
+  senderPrivateKey: string; // Private key of the sender so mine (new key pair)
+  receiverPublicKey: string; // Public key of the receiver new key pair
+  signResult: SignedResponse;
 }
 
 export interface MessageType {

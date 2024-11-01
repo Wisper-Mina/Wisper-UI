@@ -1,4 +1,3 @@
-import { SignedResponse } from "@/types/auro";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { io } from "socket.io-client";
 
@@ -23,14 +22,12 @@ export const socketSlice = createSlice({
       action: PayloadAction<{
         createrPk: string;
         chat_id: string;
-        signResult: SignedResponse;
       }>
     ) => {
       state.socket.emit(
         "create chat",
         action.payload.createrPk,
-        action.payload.chat_id,
-        action.payload.signResult
+        action.payload.chat_id
       );
     },
     userTyping: (

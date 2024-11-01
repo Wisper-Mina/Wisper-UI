@@ -6,17 +6,14 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { ChatResponse, ChatType, ImageType } from "@/types/messages";
 import { getCurrentTime } from "@/utils/dateConverter";
 import { createNewChat, joinChat } from "./thunk";
+import { SignedResponse } from "@/types/auro";
 
 const initialState: ChatResponse = {
   chats: [],
   pubKey58: "",
 };
 
-const saveToLocalStorage = (
-  pubKey58: string,
-  chats: ChatType[],
-  signingPrivateKey58?: string
-) => {
+const saveToLocalStorage = (pubKey58: string, chats: ChatType[]) => {
   const chatsToSave = chats.map((chat) => {
     return {
       ...chat,
@@ -25,18 +22,9 @@ const saveToLocalStorage = (
     };
   });
 
-  const localStore = localStorage.getItem(`chat-${pubKey58}`);
-  if (localStore) {
-    const localData = JSON.parse(localStore);
-    if (localData.signingPrivateKey58) {
-      signingPrivateKey58 = localData.signingPrivateKey58;
-    }
-  }
-
   const saveData = {
     pubKey58,
     chats: chatsToSave,
-    signingPrivateKey58: signingPrivateKey58 ?? "",
   };
   localStorage.setItem(`chat-${pubKey58}`, JSON.stringify(saveData));
 };
@@ -168,17 +156,53 @@ export const chatSlice = createSlice({
         chat.receiperTyping = isTyping;
       }
     },
-    deleteChat: (
+    terminateChats: (
       state,
       action: PayloadAction<{
         offlineChats: string[];
       }>
     ) => {
       const { offlineChats } = action.payload;
-      state.chats = state.chats.filter(
-        (chat) => !offlineChats.includes(chat.id)
-      );
+      state.chats = state.chats
+        .filter((chat) => !offlineChats.includes(chat.id))
+        .map((chat) => {
+          return {
+            ...chat,
+            type: "terminated",
+          };
+        });
+
       saveToLocalStorage(state.pubKey58, state.chats);
+    },
+    setSignResult: (
+      state,
+      action: PayloadAction<{
+        chat_id: string;
+        keypairPrivateKey58: string;
+        signResult: SignedResponse;
+      }>
+    ) => {
+      const { chat_id, keypairPrivateKey58, signResult } = action.payload;
+      const chat = state.chats.find((chat) => chat.id === chat_id);
+      if (chat) {
+        chat.signResult = signResult;
+        chat.senderPrivateKey = keypairPrivateKey58;
+        saveToLocalStorage(state.pubKey58, state.chats);
+      }
+    },
+    setReceiverSignResult: (
+      state,
+      action: PayloadAction<{
+        chat_id: string;
+        keypairPublicKey: string;
+      }>
+    ) => {
+      const { chat_id, keypairPublicKey } = action.payload;
+      const chat = state.chats.find((chat) => chat.id === chat_id);
+      if (chat) {
+        chat.receiverPublicKey = keypairPublicKey;
+        saveToLocalStorage(state.pubKey58, state.chats);
+      }
     },
   },
   extraReducers: (builder) => {
@@ -189,18 +213,18 @@ export const chatSlice = createSlice({
           chatWith: action.payload.receiverPublicKey,
           username: null,
           image: "default",
+          type: "active",
           unReadMessages: 0,
           lastMessage: null,
           messages: [],
           receiperOnline: false,
           receiperTyping: false,
+          senderPrivateKey: action.payload.signingPrivateKey,
+          receiverPublicKey: "",
+          signResult: action.payload.signResult,
         };
         state.chats.push(newChat);
-        saveToLocalStorage(
-          action.payload.senderPublicKey,
-          state.chats,
-          action.payload.signingPrivateKey
-        );
+        saveToLocalStorage(action.payload.senderPublicKey, state.chats);
       })
       .addCase(joinChat.fulfilled, (state, action) => {
         const isChatExist = state.chats.find(
@@ -212,11 +236,15 @@ export const chatSlice = createSlice({
           chatWith: action.payload.chatWith,
           username: null,
           image: "default",
+          type: "active",
           unReadMessages: 0,
           lastMessage: null,
           messages: [],
           receiperOnline: false,
           receiperTyping: false,
+          senderPrivateKey: "",
+          receiverPublicKey: "",
+          signResult: null,
         };
         state.chats.push(newChat);
         saveToLocalStorage(state.pubKey58, state.chats);
@@ -234,7 +262,9 @@ export const {
   setReceiverTyping,
   getNewMessage,
   setUserPubKey,
-  deleteChat,
+  terminateChats,
+  setSignResult,
+  setReceiverSignResult,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

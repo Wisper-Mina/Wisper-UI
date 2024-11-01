@@ -12,12 +12,15 @@ import {
 import { ImageType } from "@/types/messages";
 import { initSocket } from "@/redux/slices/socket/slice";
 import {
-  deleteChat,
+  terminateChats,
   getNewMessage,
   setReceiverOnline,
   setReceiverTyping,
   setUserPubKey,
+  setReceiverSignResult,
 } from "@/redux/slices/chat/slice";
+import { SignedResponse } from "@/types/auro";
+import { checkSignature } from "@/utils/checkSignature";
 
 export const SessionProvider = ({
   children,
@@ -41,7 +44,7 @@ export const SessionProvider = ({
       .filter((chat) => !chat.receiperOnline)
       .map((chat) => chat.id);
     dispatch(
-      deleteChat({
+      terminateChats({
         offlineChats,
       })
     );
@@ -64,11 +67,29 @@ export const SessionProvider = ({
     socket.emit("join app", publicKey58, chatIds);
   }, [chats, publicKey58, socket]);
 
+  const sendSignResult = useCallback(() => {
+    if (!chats || !publicKey58) {
+      return;
+    }
+    chats.forEach((chat) => {
+      if (chat.senderPrivateKey && chat.signResult) {
+        socket?.emit("sign result", chat.id, publicKey58, chat.signResult);
+      }
+    });
+  }, [chats, publicKey58]);
+
   useEffect(() => {
     if (!socket) {
       return;
     }
     socket?.on("online users", (users: string[]) => {
+      if (!users || users.length === 0) {
+        return;
+      }
+
+      if (users.length === 2) {
+        sendSignResult();
+      }
       users.forEach((user: string) => {
         dispatch(setReceiverOnline({ chatWith: user, isOnline: true }));
       });
@@ -87,7 +108,7 @@ export const SessionProvider = ({
       socket.off("user offline");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket]);
+  }, [socket, chats]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: any) => {
@@ -104,6 +125,34 @@ export const SessionProvider = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chats]);
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+    socket?.on(
+      "receive sign result",
+      async (data: {
+        chatId: string;
+        senderPk: string;
+        signResult: SignedResponse;
+      }) => {
+        const res = await checkSignature(data.signResult);
+
+        if (res && data?.signResult?.data) {
+          dispatch(
+            setReceiverSignResult({
+              chat_id: data.chatId,
+              keypairPublicKey: data.signResult?.data as string,
+            })
+          );
+        } else {
+          // TODO: handle invalid signature
+          console.log("Signature is not valid");
+        }
+      }
+    );
+  }, [socket]);
 
   useEffect(() => {
     if (!socket) {
