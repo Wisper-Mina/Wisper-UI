@@ -71,19 +71,20 @@ const setupSocket = async (server) => {
      * @returns emit online status to the other users
      * @returns send online status to the user
      */
-    socket.on("create chat", (createrPk, chat_id, createrSignResult) => {
+    socket.on("create chat", (createrPk, chat_id) => {
       logger.info(`User ${createrPk} created chat: ${chat_id}`);
       if (!users[chat_id]) {
         users[chat_id] = [];
       }
       if (users[chat_id].find((user) => user.pubkey === createrPk)) {
         logger.info(`User ${createrPk} is already in chat: ${chat_id}`);
+
         return;
       }
+
       users[chat_id].push({
         socketId: socket.id,
         pubkey: createrPk,
-        createrSignResult,
       });
       socket.join(chat_id);
       const onlineUsers = users[chat_id].map((user) => user.pubkey);
@@ -138,7 +139,6 @@ const setupSocket = async (server) => {
           }
         }
         if (user_online) {
-          console.log(senderPk, receiverPk, message, chatId);
           socket.to(chatId).emit("receive message", {
             message,
             senderPk,
@@ -156,7 +156,6 @@ const setupSocket = async (server) => {
      */
     socket.on("disconnect", () => {
       logger.info("User disconnected:", socket.id);
-      console.log("1", users);
       for (const chatId in users) {
         const user = users[chatId].find((user) => user.socketId === socket.id);
         if (user) {
@@ -182,6 +181,20 @@ const setupSocket = async (server) => {
      */
     socket.on("stop typing", (chatId, stopperPk) => {
       socket.to(chatId).emit("user stopped typing", stopperPk);
+    });
+
+    /**
+     * @param chatId : Chat ID
+     * @param senderPk : Public key of the sender
+     * @param signResult : Signature result
+     * @returns emit receive sign result
+     */
+    socket.on("sign result", (chatId, senderPk, signResult) => {
+      socket.to(chatId).emit("receive sign result", {
+        chatId,
+        senderPk,
+        signResult,
+      });
     });
   });
 
