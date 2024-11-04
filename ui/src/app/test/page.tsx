@@ -12,10 +12,10 @@ const PageTest = () => {
 
     const zkProgramClient = new ZkProgramWorkerClient();
 
-    await timeout(30);
+    await timeout(5);
 
     setDisplayText("Setting active instance to devnet...");
-    await zkProgramClient.setActiveInstanceToDevnet();
+    // await zkProgramClient.setActiveInstanceToDevnet();
 
     setDisplayText("Loading program...");
     console.log("Loading program...");

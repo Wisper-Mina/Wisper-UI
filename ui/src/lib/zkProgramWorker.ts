@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PublicKey, Mina, fetchAccount } from "o1js";
+import { Mina, fetchAccount, PublicKey } from "o1js";
 
 import { MessageVerificationProgram } from "../../../mina/build/src/proof/proof.js";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 const state = {
   MessageVerificationProgram: null as null | typeof MessageVerificationProgram,
 };
@@ -14,24 +14,18 @@ const functions = {
     const Network = Mina.Network(
       "https://api.minascan.io/node/devnet/v1/graphql"
     );
-    console.log("Devnet network instance configured.");
     Mina.setActiveInstance(Network);
   },
   loadProgram: async () => {
-    console.log("Loading MessageVerificationProgram...");
     const { MessageVerificationProgram } = await import(
       "../../../mina/build/src/proof/proof.js"
     );
-    console.log("MessageVerificationProgram loaded.");
     state.MessageVerificationProgram = MessageVerificationProgram;
   },
   compileProgram: async () => {
-    console.log(
-      "Compiling MessageVerificationProgram...",
-      state.MessageVerificationProgram
-    );
-    await state.MessageVerificationProgram!.compile();
-    console.log("MessageVerificationProgram compiled.");
+    await state.MessageVerificationProgram!.compile({
+      forceRecompile: true,
+    });
   },
   fetchAccount: async (args: { publicKey58: string }) => {
     const publicKey = PublicKey.fromBase58(args.publicKey58);

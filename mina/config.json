@@ -1,4 +1,23 @@
 {
   "version": 1,
-  "deployAliases": {}
+  "deployAliases": {
+    "wisper": {
+      "networkId": "testnet",
+      "url": "https://api.minascan.io/node/devnet/v1/graphql",
+      "keyPath": "keys/wisper.json",
+      "feepayerKeyPath": "/Users/kutaysari/.cache/zkapp-cli/keys/ac.json",
+      "feepayerAlias": "ac",
+      "fee": "0.1",
+      "smartContract": "Wisper"
+    },
+    "wisper-2": {
+      "networkId": "testnet",
+      "url": "https://proxy.devnet.minaexplorer.com/graphql",
+      "keyPath": "keys/wisper-2.json",
+      "feepayerKeyPath": "/Users/kutaysari/.cache/zkapp-cli/keys/03-deploy.json",
+      "feepayerAlias": "03-deploy",
+      "fee": "0.1",
+      "smartContract": "Wisper"
+    }
+  }
 }
