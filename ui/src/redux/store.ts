@@ -5,6 +5,7 @@ import overlayReducer from "./slices/overlaySlice";
 import sessionReducer from "./slices/session/slice";
 import modalReducer from "./slices/modal/slice";
 import socketReducer from "./slices/socket/slice";
+import zkAppReducer from "./slices/zkApp/slice";
 
 // Store'u yapılandır
 export const store = configureStore({
@@ -14,6 +15,7 @@ export const store = configureStore({
     overlay: overlayReducer,
     modal: modalReducer,
     socket: socketReducer,
+    zkApp: zkAppReducer,
   },
 });
 

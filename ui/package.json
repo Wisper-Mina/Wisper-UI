@@ -13,7 +13,7 @@
     "jsonwebtoken": "^9.0.2",
     "next": "14.2.13",
     "next-themes": "^0.3.0",
-    "o1js": "^1.8.0",
+    "o1js": "^2.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",

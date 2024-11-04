@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
     "maxNodeModuleJsDepth": 0,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,

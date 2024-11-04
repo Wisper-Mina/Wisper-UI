@@ -51,6 +51,7 @@ export const SessionProvider = ({
     // TODO: terminate offline chat
   }, [chats]);
 
+  // init socket
   useEffect(() => {
     if (!publicKey58) {
       return;
@@ -59,6 +60,7 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey58]);
 
+  // join app
   useEffect(() => {
     if (!socket || !publicKey58) {
       return;
@@ -78,6 +80,7 @@ export const SessionProvider = ({
     });
   }, [chats, publicKey58]);
 
+  // online users
   useEffect(() => {
     if (!socket) {
       return;
@@ -110,6 +113,7 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, chats]);
 
+  // before unload
   useEffect(() => {
     const handleBeforeUnload = (event: any) => {
       terminateOfflineChat();
@@ -126,6 +130,7 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chats]);
 
+  // receive sign result
   useEffect(() => {
     if (!socket) {
       return;
@@ -154,6 +159,7 @@ export const SessionProvider = ({
     );
   }, [socket]);
 
+  // user typing
   useEffect(() => {
     if (!socket) {
       return;
@@ -177,6 +183,7 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
+  // on account change mina wallet
   useEffect(() => {
     const mina = (window as any).mina;
 
@@ -203,6 +210,7 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // receive message
   useEffect(() => {
     if (!socket) {
       return;
@@ -225,6 +233,7 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, publicKey58]);
 
+  // set public key
   useEffect(() => {
     if (publicKey) {
       dispatch(setPublicKey(publicKey));
@@ -233,6 +242,7 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
 
+  // set image
   useEffect(() => {
     const user_image = localStorage.getItem("user_image");
     if (user_image) {

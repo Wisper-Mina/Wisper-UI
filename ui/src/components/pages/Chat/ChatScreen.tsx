@@ -45,7 +45,6 @@ export const ChatScreen = ({ chat_id }: { chat_id: string }) => {
   }, [chat, publicKey]);
 
   useEffect(() => {
-    console.log("chat", chat);
     if (!chat || hasInitializedKeyPair.current) {
       return;
     }
