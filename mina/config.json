@@ -18,6 +18,15 @@
       "feepayerAlias": "03-deploy",
       "fee": "0.1",
       "smartContract": "Wisper"
+    },
+    "wisper-last": {
+      "networkId": "testnet",
+      "url": "https://api.minascan.io/node/devnet/v1/graphql",
+      "keyPath": "keys/wisper-last.json",
+      "feepayerKeyPath": "/Users/beko/.cache/zkapp-cli/keys/beko-dev.json",
+      "feepayerAlias": "beko-dev",
+      "fee": "0.1",
+      "smartContract": "Wisper"
     }
   }
 }
