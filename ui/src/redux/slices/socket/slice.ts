@@ -1,4 +1,6 @@
+import { EncryptedData } from "@/lib/zkProgramWorker";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { JsonProof } from "o1js";
 import { io } from "socket.io-client";
 
 interface SocketState {
@@ -61,7 +63,10 @@ export const socketSlice = createSlice({
       action: PayloadAction<{
         senderPk: string;
         chatId: string;
-        message: string;
+        message: {
+          proof: JsonProof;
+          encryptedMessage: EncryptedData;
+        };
         receiver58: string;
       }>
     ) => {

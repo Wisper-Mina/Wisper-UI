@@ -5,7 +5,7 @@ import { MessagePackage } from '../interfaces/MessagePackage.interface';
 import { encrypt, decrypt } from '../encryption/aes-gcm';
 import {
   generateProof,
-  generateProofWithPreviousProof,
+  // generateProofWithPreviousProof,
 } from '../proof/generateProof';
 import { MessageVerificationProgram } from '../proof/proof';
 import { CryptoUtils } from '../ecdh-pallas/ecdh-pallas';
@@ -66,7 +66,10 @@ describe('Chat functions', () => {
     );
 
     //This is the package clients post each other
-    messagePackage = { encryptedMessage: encryptedMessage, proof: proof.proof };
+    messagePackage = {
+      encryptedMessage: encryptedMessage,
+      proof: proof.proof as any,
+    };
   });
   it('should decrypt and get exact message', async () => {
     const sharedSecret = CryptoUtils.computeSharedSecret(
@@ -109,17 +112,24 @@ describe('Chat functions', () => {
     const messageSignatureFields = messageSignature.toFields();
     merkleTree.setLeaf(1n, Poseidon.hash(messageSignatureFields));
     const messageIndex = 1;
-    const newProof = await generateProofWithPreviousProof(
+    // const newProof = await generateProofWithPreviousProof(
+    //   signingPublicKey2,
+    //   messageHash,
+    //   messageSignature,
+    //   merkleTree,
+    //   messageIndex,
+    //   messagePackage.proof
+    // );
+    const newProof = await generateProof(
       signingPublicKey2,
       messageHash,
       messageSignature,
       merkleTree,
-      messageIndex,
-      messagePackage.proof
+      messageIndex
     );
     messagePackage2 = {
       encryptedMessage: encryptedMessage,
-      proof: newProof.proof,
+      proof: newProof.proof as any,
     };
   });
   it('should decrypt and get exact message', async () => {

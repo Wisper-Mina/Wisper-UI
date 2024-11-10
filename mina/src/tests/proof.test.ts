@@ -35,7 +35,8 @@ describe('Proof generation', () => {
       merkleTree,
       messageCounter
     );
-    const isValid = await MessageVerificationProgram.verify(proof.proof);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const isValid = await MessageVerificationProgram.verify(proof.proof as any);
     expect(isValid).toStrictEqual(true);
   });
 });

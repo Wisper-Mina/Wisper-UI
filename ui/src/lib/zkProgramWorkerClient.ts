@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fetchAccount, PublicKey } from "o1js";
+import { fetchAccount, PrivateKey, PublicKey } from "o1js";
 
 import type {
   ZkProgramWorkerRequest,
   ZkProgramWorkerReponse,
   WorkerFunctions,
+  EncryptedData,
 } from "./zkProgramWorker";
 
 export default class ZkProgramWorkerClient {
@@ -32,6 +33,40 @@ export default class ZkProgramWorkerClient {
     return result as ReturnType<typeof fetchAccount>;
   }
 
+  generateProof({
+    signingPrivateKey,
+    pureMessage,
+    receiverPublicKey,
+    messageIndex,
+  }: {
+    signingPrivateKey: PrivateKey;
+    pureMessage: string;
+    receiverPublicKey: PublicKey;
+    messageIndex: number;
+  }): Promise<{ encryptedMessage: any; proof: any }> {
+    return this._call("generateProof", {
+      signingPrivateKey58: signingPrivateKey.toBase58(),
+      pureMessage,
+      receiverPublicKey58: receiverPublicKey.toBase58(),
+      messageIndex,
+    });
+  }
+
+  decryptMessage({
+    signingPrivateKey,
+    receiverPublicKey,
+    encryptedMessage,
+  }: {
+    signingPrivateKey: PrivateKey;
+    receiverPublicKey: PublicKey;
+    encryptedMessage: EncryptedData;
+  }): Promise<string> {
+    return this._call("decryptMessage", {
+      signingPrivateKey58: signingPrivateKey.toBase58(),
+      receiverPublicKey58: receiverPublicKey.toBase58(),
+      encryptedMessage,
+    });
+  }
   // ---------------------------------------------------------------------------------------
 
   worker: Worker;
@@ -54,7 +89,7 @@ export default class ZkProgramWorkerClient {
     };
   }
 
-  _call(fn: WorkerFunctions, args: any) {
+  _call(fn: WorkerFunctions, args: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.promises[this.nextId] = { resolve, reject };
 

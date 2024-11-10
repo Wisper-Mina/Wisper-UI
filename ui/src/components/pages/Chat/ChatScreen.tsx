@@ -51,6 +51,7 @@ export const ChatScreen = ({ chat_id }: { chat_id: string }) => {
 
     if (!chat.signResult && !chat.senderPrivateKey) {
       hasInitializedKeyPair.current = true;
+      console.log("Creating new key pair...");
       createNewKP().then((res) => {
         if (!res) {
           hasInitializedKeyPair.current = false; // Reset if the result fails

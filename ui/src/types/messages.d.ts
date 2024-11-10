@@ -1,4 +1,6 @@
+import { EncryptedData } from "@/lib/zkProgramWorker";
 import { SignedResponse } from "./auro";
+import { JsonProof } from "o1js";
 
 export interface ChatResponse {
   chats: ChatType[];
@@ -23,10 +25,16 @@ export interface ChatType {
 
 export interface MessageType {
   id: string;
-  content: string;
+  content: MessagePack;
   time: string;
   timestamp: number;
   isMine: boolean;
+}
+
+export interface MessagePackType {
+  proof: JsonProof;
+  encryptedMessage: EncryptedData;
+  pureMessage: string;
 }
 
 export type ImageType =

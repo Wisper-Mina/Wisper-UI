@@ -10,17 +10,28 @@ import {
   userStopTyping,
   userTyping,
 } from "@/redux/slices/socket/slice";
+import { PrivateKey, PublicKey } from "o1js";
 
 export const ChatInput = ({
   chatWith,
   chat_id,
-}: {
+  signingPrivateKey58,
+  receiverPubKey58,
+}: // lengthOfMessage,
+{
   chatWith: string | null;
   chat_id: string;
+  signingPrivateKey58: string;
+  receiverPubKey58: string;
+  lengthOfMessage: number;
 }) => {
   const [message, setMessage] = useState<string>("");
 
+  const [isGeneratingProof, setIsGeneratingProof] = useState<boolean>(false);
+
   const typerPk = useAppSelector((state) => state.session.publicKeyBase58);
+
+  const zkProgramClient = useAppSelector((state) => state.zkApp.zkProgram);
 
   const dispatch = useAppDispatch();
 
@@ -30,14 +41,40 @@ export const ChatInput = ({
     return null;
   }
 
-  const sendMessage = () => {
-    if (!message) return;
-    dispatch(setNewMessage({ chatWith, newMessage: message }));
+  const sendMessage = async () => {
+    if (!message || !zkProgramClient) {
+      return;
+    }
+    console.log("generating proof");
+    setIsGeneratingProof(true);
+    const signingPrivateKey = PrivateKey.fromBase58(signingPrivateKey58);
+    const receiverPublicKey = PublicKey.fromBase58(receiverPubKey58);
+    const respProof = await zkProgramClient.generateProof({
+      signingPrivateKey,
+      pureMessage: message,
+      receiverPublicKey,
+      messageIndex: 0, // TODO: Implement message index
+    });
+    //TODO: add loading state
+    console.log("respProof", respProof);
+    setIsGeneratingProof(false);
+
+    if (!respProof) {
+      return; // TODO: Handle error with toast
+    }
+
+    const messagePack = {
+      proof: respProof?.proof,
+      encryptedMessage: respProof?.encryptedMessage,
+      pureMessage: message,
+    };
+
+    dispatch(setNewMessage({ chatWith, newMessagePack: messagePack }));
     dispatch(
       sendMessageSocket({
         senderPk: typerPk ?? "",
         chatId: chat_id,
-        message: message,
+        message: respProof,
         receiver58: chatWith,
       })
     );
@@ -66,6 +103,7 @@ export const ChatInput = ({
           className="w-full border border-light-input-border bg-transparent dark:bg-[#151515] rounded-[44px] h-12 px-4 text-sm outline-none"
           placeholder="Type a message"
           value={message}
+          disabled={isGeneratingProof}
           onChange={(e) => {
             setMessage(e.target.value);
             if (!!e.target.value) {
@@ -85,6 +123,7 @@ export const ChatInput = ({
         />
       </label>
       <button
+        disabled={isGeneratingProof}
         onClick={sendMessage}
         className={`min-w-10 min-h-10 transition-all flex items-center justify-center rounded-full ${
           !!message
@@ -92,7 +131,11 @@ export const ChatInput = ({
             : "bg-primary cursor-default"
         }`}
       >
-        <UpIcon theme={theme} />
+        {isGeneratingProof ? (
+          <div className="w-4 h-4 border-b border-t border-r border-white rounded-full animate-spin"></div>
+        ) : (
+          <UpIcon theme={theme} />
+        )}
       </button>
     </div>
   );

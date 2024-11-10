@@ -38,7 +38,7 @@ export const ChatComp = ({ chat }: ChatCompProps) => {
             : chat?.chatWith?.slice(0, 12) + "..." + chat?.chatWith?.slice(-6)}
         </p>
         <p className="truncate font-semibold max-w-[250px] text-opacity-60 text-light-chats-text dark:text-white text-xs">
-          {chat.lastMessage?.content}
+          {chat.lastMessage?.content?.pureMessage}
         </p>
       </div>
       <div className="h-12 py-1 flex flex-col items-end justify-between">

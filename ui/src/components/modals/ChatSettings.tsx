@@ -9,6 +9,8 @@ import { APP_URL } from "@/lib/constants";
 import { useAppDispatch } from "@/types/state";
 import { closeOverlay } from "@/redux/slices/overlaySlice";
 import toast from "react-hot-toast";
+import { deleteChat } from "@/redux/slices/chat/slice";
+import { useRouter } from "next/navigation";
 
 interface ChatSettingsProps {
   icon: React.ReactNode;
@@ -32,6 +34,8 @@ export const ChatSettings = ({
   const chat_link_url = `${APP_URL}/chat/${chat_id}`;
 
   const dispatch = useAppDispatch();
+
+  const router = useRouter();
 
   const items: ChatSettingsProps[] = [
     {
@@ -63,7 +67,8 @@ export const ChatSettings = ({
       icon: <Image src={TrashIcon} alt="trash" width={20} height={20} />,
       type: "danger",
       callback: () => {
-        //TODO: Implement delete chat
+        dispatch(deleteChat({ chat_id }));
+        router.push("/home");
       },
     },
   ];

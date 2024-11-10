@@ -3,10 +3,17 @@ import { v4 as uuidv4 } from "uuid";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { ChatResponse, ChatType, ImageType } from "@/types/messages";
+import {
+  ChatResponse,
+  ChatType,
+  ImageType,
+  MessagePackType,
+} from "@/types/messages";
 import { getCurrentTime } from "@/utils/dateConverter";
 import { createNewChat, joinChat } from "./thunk";
 import { SignedResponse } from "@/types/auro";
+import { JsonProof } from "o1js";
+import { EncryptedData } from "@/lib/zkProgramWorker";
 
 const initialState: ChatResponse = {
   chats: [],
@@ -71,15 +78,15 @@ export const chatSlice = createSlice({
       state,
       action: PayloadAction<{
         chatWith: string;
-        newMessage: string;
+        newMessagePack: MessagePackType;
       }>
     ) => {
-      const { chatWith, newMessage } = action.payload;
+      const { chatWith, newMessagePack } = action.payload;
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         const { timeStr, timestamp } = getCurrentTime();
         const message = {
-          content: newMessage,
+          content: newMessagePack,
           isMine: true,
           time: timeStr,
           timestamp,
@@ -94,16 +101,24 @@ export const chatSlice = createSlice({
       state,
       action: PayloadAction<{
         chatWith: string;
-        newMessage: string;
+        newMessagePack: {
+          proof: JsonProof;
+          encryptedMessage: EncryptedData;
+        };
+        pureMessage: string;
         unRead: boolean;
       }>
     ) => {
-      const { chatWith, newMessage } = action.payload;
+      const { chatWith, newMessagePack, pureMessage } = action.payload;
       const chat = state.chats.find((chat) => chat.chatWith === chatWith);
       if (chat) {
         const { timeStr, timestamp } = getCurrentTime();
         const message = {
-          content: newMessage,
+          content: {
+            proof: newMessagePack.proof,
+            encryptedMessage: newMessagePack.encryptedMessage,
+            pureMessage: pureMessage,
+          },
           isMine: false,
           time: timeStr,
           timestamp,
@@ -204,7 +219,19 @@ export const chatSlice = createSlice({
         saveToLocalStorage(state.pubKey58, state.chats);
       }
     },
+    deleteChat: (
+      state,
+      action: PayloadAction<{
+        chat_id: string;
+      }>
+    ) => {
+      const { chat_id } = action.payload;
+      state.chats = state.chats.filter((chat) => chat.id !== chat_id);
+      saveToLocalStorage(state.pubKey58, state.chats);
+      window.location.href = "/home";
+    },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(createNewChat.fulfilled, (state, action) => {
@@ -265,6 +292,7 @@ export const {
   terminateChats,
   setSignResult,
   setReceiverSignResult,
+  deleteChat,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

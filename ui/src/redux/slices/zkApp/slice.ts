@@ -1,9 +1,9 @@
-import ZkAppWorkerClient from "@/lib/zkAppWorkerClient";
+import ZkProgramWorkerClient from "@/lib/zkProgramWorkerClient";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: {
-  zkProgram: null | ZkAppWorkerClient;
+  zkProgram: null | ZkProgramWorkerClient;
 } = {
   zkProgram: null,
 };
@@ -15,7 +15,7 @@ export const zkAppSlice = createSlice({
     setZkProgram: (
       state,
       action: PayloadAction<{
-        zkProgram: ZkAppWorkerClient;
+        zkProgram: ZkProgramWorkerClient;
       }>
     ) => {
       state.zkProgram = action.payload.zkProgram;

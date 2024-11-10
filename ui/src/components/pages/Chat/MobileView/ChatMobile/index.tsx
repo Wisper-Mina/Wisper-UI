@@ -44,7 +44,13 @@ const ChatMobile = ({ chat }: { chat: ChatType }) => {
         />
       </div>
       <MessageList messages={chat?.messages} />
-      <ChatInput chatWith={chat?.chatWith} chat_id={chat?.id} />
+      <ChatInput
+        chatWith={chat?.chatWith}
+        chat_id={chat?.id}
+        signingPrivateKey58={chat?.senderPrivateKey}
+        receiverPubKey58={chat?.receiverPublicKey}
+        lengthOfMessage={chat?.messages?.length}
+      />
     </div>
   );
 };

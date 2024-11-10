@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useParams, useRouter } from "next/navigation";
 
@@ -21,6 +21,10 @@ import {
 } from "@/redux/slices/chat/slice";
 import { SignedResponse } from "@/types/auro";
 import { checkSignature } from "@/utils/checkSignature";
+import ZkProgramWorkerClient from "@/lib/zkProgramWorkerClient";
+import { timeout } from "@/utils/timeout";
+import { setZkProgram } from "@/redux/slices/zkApp/slice";
+import { PrivateKey, PublicKey } from "o1js";
 
 export const SessionProvider = ({
   children,
@@ -32,11 +36,15 @@ export const SessionProvider = ({
 
   const router = useRouter();
 
+  const [loadingCLient, setLoadingClient] = useState<boolean>(false);
+
   const publicKey58 = useAppSelector((state) => state.session.publicKeyBase58);
 
   const socket = useAppSelector((state) => state.socket.socket);
 
   const params = useParams<{ chat_id: string }>();
+
+  const zkProgram = useAppSelector((state) => state.zkApp.zkProgram);
 
   const terminateOfflineChat = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,6 +57,7 @@ export const SessionProvider = ({
       })
     );
     // TODO: terminate offline chat
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chats]);
 
   // init socket
@@ -78,6 +87,7 @@ export const SessionProvider = ({
         socket?.emit("sign result", chat.id, publicKey58, chat.signResult);
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chats, publicKey58]);
 
   // online users
@@ -157,6 +167,7 @@ export const SessionProvider = ({
         }
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   // user typing
@@ -210,28 +221,53 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // receive message
   useEffect(() => {
-    if (!socket) {
+    if (!socket || !zkProgram) {
       return;
     }
-    socket?.on("receive message", (data: any) => {
+    const handleMessage = async (data: any) => {
+      console.log("receive message", data);
       let unRead = false;
       if (!params || !params.chat_id || params.chat_id !== data?.chatId) {
         unRead = true;
       }
       if (data?.receiverPk === publicKey58) {
+        const messagingChat = chats.find((chat) => chat.id === data?.chatId);
+
+        if (!messagingChat) {
+          return;
+        }
+        const receiverPublicKey = PublicKey.fromBase58(
+          messagingChat?.receiverPublicKey
+        );
+        const signingPrivateKey = PrivateKey.fromBase58(
+          messagingChat?.senderPrivateKey
+        );
+        console.log("decrypting message");
+        const pureMessage = await zkProgram.decryptMessage({
+          encryptedMessage: data?.message?.encryptedMessage,
+          receiverPublicKey,
+          signingPrivateKey,
+        });
+        console.log("pureMessage", pureMessage);
         dispatch(
           getNewMessage({
             chatWith: data?.senderPk,
-            newMessage: data.message,
+            newMessagePack: data.message,
+            pureMessage,
             unRead,
           })
         );
       }
-    });
+    };
+
+    socket.on("receive message", handleMessage);
+
+    return () => {
+      socket.off("receive message", handleMessage);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, publicKey58]);
+  }, [socket, publicKey58, zkProgram]);
 
   // set public key
   useEffect(() => {
@@ -251,5 +287,42 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <>{children}</>;
+  useEffect(() => {
+    (async () => {
+      setLoadingClient(true);
+      console.log("Starting processing...");
+
+      const zkProgramClient = new ZkProgramWorkerClient();
+
+      await timeout(5);
+      console.log("Setting active instance to devnet...");
+
+      await zkProgramClient.setActiveInstanceToDevnet();
+      console.log("Loading program...");
+      await zkProgramClient.loadProgram();
+
+      console.log("Compiling program...");
+      await zkProgramClient.compileProgram();
+
+      console.log("Program loaded and compiled.");
+      dispatch(
+        setZkProgram({
+          zkProgram: zkProgramClient,
+        })
+      );
+      setLoadingClient(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <>
+      {loadingCLient && (
+        <div className="fixed z-50 pointer-events-none bg-black bg-opacity-60 inset-0 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full border-t-[4px] border-b-[4px] border-r-[4px] border-white animate-spin"></div>
+        </div>
+      )}
+      {children}
+    </>
+  );
 };
