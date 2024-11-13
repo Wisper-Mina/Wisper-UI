@@ -68,7 +68,7 @@ describe('Chat functions', () => {
     //This is the package clients post each other
     messagePackage = {
       encryptedMessage: encryptedMessage,
-      proof: proof.proof as any,
+      proof: proof,
     };
   });
   it('should decrypt and get exact message', async () => {
@@ -129,7 +129,7 @@ describe('Chat functions', () => {
     );
     messagePackage2 = {
       encryptedMessage: encryptedMessage,
-      proof: newProof.proof as any,
+      proof: newProof,
     };
   });
   it('should decrypt and get exact message', async () => {

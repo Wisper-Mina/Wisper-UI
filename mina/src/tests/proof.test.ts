@@ -36,7 +36,7 @@ describe('Proof generation', () => {
       messageCounter
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const isValid = await MessageVerificationProgram.verify(proof.proof as any);
+    const isValid = await MessageVerificationProgram.verify(proof);
     expect(isValid).toStrictEqual(true);
   });
 });

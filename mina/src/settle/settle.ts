@@ -16,7 +16,9 @@ export class MessageVerificationProgramProof extends ZkProgram.Proof(
   MessageVerificationProgram
 ) {}
 
-const MESSAGE_TREE_DEPTH = 10;
+const MESSAGE_TREE_DEPTH = 10; // Max 2^10 message
+
+
 export class Wisper extends SmartContract {
   @state(Field) merkleRoot = State<Field>();
   @state(PublicKey) hostUser = State<PublicKey>();
@@ -33,27 +35,6 @@ export class Wisper extends SmartContract {
     this.chatId.set(Field(0));
   }
 
-  @method async startChat(
-    hostUser: PublicKey,
-    guestUser: PublicKey,
-    chatId: Field
-  ) {
-    const senderPublicKey = this.sender.getAndRequireSignature();
-    hostUser.assertEquals(senderPublicKey);
-
-    const storedGuestUser = this.guestUser.get();
-    storedGuestUser.assertEquals(PublicKey.empty());
-
-    const storedChatId = this.chatId.get();
-    storedChatId.assertEquals(Field(0));
-
-    this.guestUser.set(guestUser);
-    this.chatId.set(chatId);
-
-    const emptyMerkleRoot = new MerkleTree(MESSAGE_TREE_DEPTH).getRoot();
-    this.merkleRoot.set(emptyMerkleRoot);
-  }
-
   //Needed info to verification can be added to parameters.
   @method async settleChat(
     hostUser: PublicKey,
@@ -63,7 +44,7 @@ export class Wisper extends SmartContract {
     timestamp: Field,
     proof: MessageVerificationProgramProof
   ) {
-    const senderPublicKey = this.sender.getAndRequireSignature();
+    const senderPublicKey = this.sender.getAndRequireSignatureV2();
 
     // Check if senderPublicKey is either hostUser or guestUser
     const isHost = hostUser.equals(senderPublicKey);
@@ -72,25 +53,34 @@ export class Wisper extends SmartContract {
       .or(isGuest)
       .assertTrue('Sender must be either the host or guest user.');
 
+    // Call the verify function from ZKProgram and verify the proof
+    proof.verify();
+    
+    this.hostUser.requireEquals(this.hostUser.get());
     const storedHostUser = this.hostUser.get();
-    storedHostUser.assertEquals(hostUser);
+    storedHostUser.assertEquals(PublicKey.empty());
 
+    this.guestUser.requireEquals(this.guestUser.get());
     const storedGuestUser = this.guestUser.get();
-    storedGuestUser.assertEquals(guestUser);
+    storedGuestUser.assertEquals(PublicKey.empty());
 
+    this.chatId.requireEquals(this.chatId.get());
     const storedChatId = this.chatId.get();
-    storedChatId.assertEquals(chatId);
+    storedChatId.assertEquals(Field(0));
 
+    this.merkleRoot.requireEquals(this.merkleRoot.get());
     const storedMerkleRoot = this.merkleRoot.get();
     storedMerkleRoot.assertEquals(new MerkleTree(MESSAGE_TREE_DEPTH).getRoot());
 
+    this.timestamp.requireEquals(this.timestamp.get());
     const storedTimestamp = this.timestamp.get();
     storedTimestamp.assertEquals(Field(0));
 
-    // Call the verify function from ZKProgram and verify the proof
-    proof.verify();
 
     this.merkleRoot.set(merkleRoot);
     this.timestamp.set(timestamp);
+    this.guestUser.set(guestUser);
+    this.hostUser.set(hostUser);
+    this.chatId.set(chatId)
   }
 }
