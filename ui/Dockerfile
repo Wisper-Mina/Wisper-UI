@@ -5,8 +5,11 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 RUN npm install
-COPY . .
-COPY ../mina ./mina
+COPY ./ui/package*.json ./
+RUN npm install
+
+COPY ./ui ./
+COPY ./mina ./mina
 
 RUN npm run build
 EXPOSE 3000
