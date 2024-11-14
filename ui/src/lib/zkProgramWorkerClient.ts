@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fetchAccount, PrivateKey, PublicKey } from "o1js";
+import { fetchAccount, JsonProof, PrivateKey, PublicKey } from "o1js";
 
 import type {
   ZkProgramWorkerRequest,
@@ -37,18 +37,37 @@ export default class ZkProgramWorkerClient {
     signingPrivateKey,
     pureMessage,
     receiverPublicKey,
-    messageIndex,
   }: {
     signingPrivateKey: PrivateKey;
     pureMessage: string;
     receiverPublicKey: PublicKey;
-    messageIndex: number;
   }): Promise<{ encryptedMessage: any; proof: any }> {
     return this._call("generateProof", {
       signingPrivateKey58: signingPrivateKey.toBase58(),
       pureMessage,
       receiverPublicKey58: receiverPublicKey.toBase58(),
+    });
+  }
+
+  generateProofWithPreviousProof({
+    signingPrivateKey,
+    pureMessage,
+    receiverPublicKey,
+    messageIndex,
+    previousProof,
+  }: {
+    signingPrivateKey: PrivateKey;
+    pureMessage: string;
+    receiverPublicKey: PublicKey;
+    messageIndex: number;
+    previousProof: JsonProof;
+  }): Promise<{ encryptedMessage: any; proof: any }> {
+    return this._call("generateProofWithPreviousProof", {
+      signingPrivateKey58: signingPrivateKey.toBase58(),
+      pureMessage,
+      receiverPublicKey58: receiverPublicKey.toBase58(),
       messageIndex,
+      previousProof,
     });
   }
 

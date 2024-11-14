@@ -42,6 +42,11 @@ const ChatDesktop = ({ chat }: { chat: ChatType }) => {
             signingPrivateKey58={chat?.senderPrivateKey}
             receiverPubKey58={chat?.receiverPublicKey}
             lengthOfMessage={chat?.messages?.length}
+            previousProof={
+              chat?.messages?.length > 0
+                ? chat?.messages[chat?.messages?.length - 1]?.content?.proof
+                : null
+            }
           />
         </>
       )}

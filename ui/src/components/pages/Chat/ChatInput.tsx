@@ -10,7 +10,7 @@ import {
   userStopTyping,
   userTyping,
 } from "@/redux/slices/socket/slice";
-import { PrivateKey, PublicKey } from "o1js";
+import { JsonProof, PrivateKey, PublicKey } from "o1js";
 
 export const ChatInput = ({
   chatWith,
@@ -18,12 +18,14 @@ export const ChatInput = ({
   signingPrivateKey58,
   receiverPubKey58,
   lengthOfMessage,
+  previousProof,
 }: {
   chatWith: string | null;
   chat_id: string;
   signingPrivateKey58: string;
   receiverPubKey58: string;
   lengthOfMessage: number;
+  previousProof: JsonProof | null;
 }) => {
   const [message, setMessage] = useState<string>("");
 
@@ -49,12 +51,23 @@ export const ChatInput = ({
     setIsGeneratingProof(true);
     const signingPrivateKey = PrivateKey.fromBase58(signingPrivateKey58);
     const receiverPublicKey = PublicKey.fromBase58(receiverPubKey58);
-    const respProof = await zkProgramClient.generateProof({
-      signingPrivateKey,
-      pureMessage: message,
-      receiverPublicKey,
-      messageIndex: lengthOfMessage,
-    });
+    let respProof;
+    if (lengthOfMessage === 0) {
+      respProof = await zkProgramClient.generateProof({
+        signingPrivateKey,
+        pureMessage: message,
+        receiverPublicKey,
+      });
+    } else if (previousProof) {
+      respProof = await zkProgramClient.generateProofWithPreviousProof({
+        signingPrivateKey,
+        pureMessage: message,
+        receiverPublicKey,
+        messageIndex: lengthOfMessage,
+        previousProof: previousProof,
+      });
+    }
+
     //TODO: add loading state
     console.log("respProof", respProof);
     setIsGeneratingProof(false);

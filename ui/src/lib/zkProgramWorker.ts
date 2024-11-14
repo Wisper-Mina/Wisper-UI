@@ -8,12 +8,23 @@ import {
   Poseidon,
   Signature,
   MerkleTree,
+  JsonProof,
+  ZkProgram,
 } from "o1js";
 import * as crypto from "crypto";
 
 import { MessageVerificationProgram } from "../../../mina/build/src/proof/proof.js";
 import { CryptoUtils } from "../../../mina/build/src/ecdh-pallas/ecdh-pallas.js";
-import { generateProof } from "../../../mina/build/src/proof/generateProof.js";
+import {
+  generateProof,
+  generateProofWithPreviousProof,
+} from "../../../mina/build/src/proof/generateProof.js";
+
+class MessageVerificationProgramProof extends ZkProgram.Proof(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  MessageVerificationProgram
+) {}
 
 const MERKLE_TREE_HEIGHT = 8; // Adjust based on your needs
 
@@ -119,8 +130,60 @@ const functions = {
     signingPrivateKey58: string;
     pureMessage: string;
     receiverPublicKey58: string;
-    messageIndex: number;
   }): Promise<{ encryptedMessage: EncryptedData; proof: any }> => {
+    const merkleTree = new MerkleTree(MERKLE_TREE_HEIGHT);
+
+    const signingPrivateKey = PrivateKey.fromBase58(args.signingPrivateKey58);
+    const signingPublicKey = signingPrivateKey.toPublicKey();
+    const receiverPublicKey = PublicKey.fromBase58(args.receiverPublicKey58);
+
+    // This is the key we will use for encryption
+    const sharedSecret = CryptoUtils.computeSharedSecret(
+      signingPrivateKey,
+      receiverPublicKey
+    );
+
+    const sharedKey = CryptoUtils.fieldToBuffer(sharedSecret);
+
+    //This is the cipher text that we will send from one client to other
+    const encryptedMessage: EncryptedData = encrypt(
+      sharedKey,
+      args.pureMessage
+    );
+
+    const message = args.pureMessage
+      .split("")
+      .map((char) => Field(char.charCodeAt(0)));
+    const messageHash = Poseidon.hash(message);
+    const messageSignature = Signature.create(
+      signingPrivateKey,
+      messageHash.toFields()
+    );
+
+    const messageSignatureFields = messageSignature.toFields();
+
+    merkleTree.setLeaf(0n, Poseidon.hash(messageSignatureFields));
+
+    const proof = await generateProof(
+      signingPublicKey,
+      messageHash,
+      messageSignature,
+      merkleTree,
+      0
+    );
+
+    return { encryptedMessage: encryptedMessage, proof: proof.toJSON() };
+  },
+  generateProofWithPreviousProof: async (args: {
+    signingPrivateKey58: string;
+    pureMessage: string;
+    receiverPublicKey58: string;
+    messageIndex: number;
+    previousProof: JsonProof;
+  }): Promise<{ encryptedMessage: EncryptedData; proof: any }> => {
+    const previousProof = (await MessageVerificationProgramProof.fromJSON(
+      args.previousProof
+    )) as MessageVerificationProgramProof;
     const merkleTree = new MerkleTree(MERKLE_TREE_HEIGHT);
 
     const signingPrivateKey = PrivateKey.fromBase58(args.signingPrivateKey58);
@@ -155,12 +218,13 @@ const functions = {
     const leaf = BigInt(args.messageIndex);
     merkleTree.setLeaf(leaf, Poseidon.hash(messageSignatureFields));
 
-    const proof = await generateProof(
+    const proof = await generateProofWithPreviousProof(
       signingPublicKey,
       messageHash,
       messageSignature,
       merkleTree,
-      args.messageIndex
+      args.messageIndex,
+      previousProof
     );
 
     return { encryptedMessage: encryptedMessage, proof: proof.toJSON() };
