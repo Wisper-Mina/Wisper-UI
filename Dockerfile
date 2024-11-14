@@ -20,4 +20,4 @@ RUN npm install
 EXPOSE 3000
 
 # Uygulamayı başlatın
-CMD ["npm", "start"]
+CMD ["npm", "run" , "dev"]
