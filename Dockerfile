@@ -13,9 +13,9 @@ COPY ui/package*.json ./
 RUN npm install
 
 # Copy the `ui` and `mina` directories
-COPY ui/ .
 COPY mina ./mina
 
+COPY ui/ .
 # Build the Next.js application in the `ui` folder
 RUN npm run build
 
