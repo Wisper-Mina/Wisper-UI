@@ -12,10 +12,9 @@ WORKDIR /app/ui
 
 RUN npm install
 
-COPY . .
 
 # Uygulamayı build edin
-RUN npm run build
+# RUN npm run build
 
 # Port 3000'i expose edin
 EXPOSE 3000
