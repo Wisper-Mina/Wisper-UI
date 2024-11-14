@@ -1,0 +1,24 @@
+FROM node:18-alpine
+
+# Çalışma dizinini ayarlayın
+WORKDIR /app
+
+# mina ve ui klasörlerini kopyalayın
+COPY ./mina /app/mina
+COPY ./ui /app/ui
+
+# ui klasörüne geçin ve bağımlılıkları yükleyin
+WORKDIR /app/ui
+
+RUN npm install
+
+COPY . .
+
+# Uygulamayı build edin
+RUN npm run build
+
+# Port 3000'i expose edin
+EXPOSE 3000
+
+# Uygulamayı başlatın
+CMD ["npm", "start"]
