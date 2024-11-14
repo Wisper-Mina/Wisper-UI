@@ -6,24 +6,24 @@ on:
 
 jobs:
   build:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
       - name: Login to docker hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build docker image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wisper-ui .
       - name: Publish image to docker hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/wisper-ui:latest
-        
+
   deploy:
     needs: build
-    runs-on: [aws-ec2]
+    runs-on: aws-ec2
     steps:
       - name: Pull image from docker hub
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/wisper-ui:latest
       - name: Delete old container
         run: docker rm -f wisper-ui
       - name: Run docker container
-         run: docker run -d -p 3000:3000 --name wisper-ui ${{ secrets.DOCKER_USERNAME }}/wisper-ui:latest
+        run: docker run -d -p 3000:3000 --name wisper-ui ${{ secrets.DOCKER_USERNAME }}/wisper-ui:latest
