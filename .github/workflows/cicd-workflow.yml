@@ -1,6 +1,7 @@
 name: CICD
 
-on push:
+on:
+ push:
   branches:
     - main
 
