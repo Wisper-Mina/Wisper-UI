@@ -7,6 +7,7 @@ import {
   Struct,
   Signature,
   MerkleWitness as BaseMerkleWitness,
+  SelfProof,
 } from 'o1js';
 
 const MERKLE_TREE_HEIGHT = 8; // Adjust based on your needs
@@ -51,33 +52,33 @@ export const MessageVerificationProgram = ZkProgram({
       },
     },
     // Recursive proof verification
-    // verifyMessageWithPrevious: {
-    //   privateInputs: [PrivateInputs, SelfProof],
+    verifyMessageWithPrevious: {
+      privateInputs: [PrivateInputs, SelfProof],
 
-    //   async method(
-    //     publicInput: MessageProof,
-    //     privateInput: PrivateInputs,
-    //     previousProof: SelfProof<MessageProof, void>
-    //   ) {
-    //     // Step 1: Verify the previous proof
-    //     previousProof.verify();
+      async method(
+        publicInput: MessageProof,
+        privateInput: PrivateInputs,
+        previousProof: SelfProof<MessageProof, void>
+      ) {
+        // Step 1: Verify the previous proof
+        previousProof.verify();
 
-    //     // Verify the signature of the message
-    //     const isSignatureValid = privateInput.messageSignature.verify(
-    //       publicInput.senderPublicKey,
-    //       publicInput.messageHash.toFields()
-    //     );
-    //     isSignatureValid.assertTrue();
+        // Verify the signature of the message
+        const isSignatureValid = privateInput.messageSignature.verify(
+          publicInput.senderPublicKey,
+          publicInput.messageHash.toFields()
+        );
+        isSignatureValid.assertTrue();
 
-    //     // Convert signature to field elements
-    //     const messageSignatureFields = privateInput.messageSignature.toFields();
+        // Convert signature to field elements
+        const messageSignatureFields = privateInput.messageSignature.toFields();
 
-    //     // Verify the Merkle path
-    //     const calculatedRoot = privateInput.merklePath.calculateRoot(
-    //       Poseidon.hash(messageSignatureFields)
-    //     );
-    //     calculatedRoot.assertEquals(publicInput.merkleRoot);
-    //   },
-    // },
+        // Verify the Merkle path
+        const calculatedRoot = privateInput.merklePath.calculateRoot(
+          Poseidon.hash(messageSignatureFields)
+        );
+        calculatedRoot.assertEquals(publicInput.merkleRoot);
+      },
+    },
   },
 });

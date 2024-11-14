@@ -4,6 +4,7 @@ import {
   Signature,
   MerkleTree,
   MerkleWitness as BaseMerkleWitness,
+  SelfProof,
   // SelfProof,
 } from 'o1js';
 import { MessageProof } from '../structs/MessageProof';
@@ -48,8 +49,8 @@ export async function generateProofWithPreviousProof(
   messageHash: Field,
   messageSignature: Signature,
   merkleTree: MerkleTree,
-  messageIndex: number
-  // previousProof: SelfProof<MessageProof, void>
+  messageIndex: number,
+  previousProof: SelfProof<MessageProof, void>
 ) {
   const merkleRoot = merkleTree.getRoot();
   const merklePath = new MerkleWitness(
@@ -67,15 +68,10 @@ export async function generateProofWithPreviousProof(
     merklePath,
   });
 
-  // const proof = await MessageVerificationProgram.verifyMessageWithPrevious(
-  //   publicInput,
-  //   privateInput,
-  //   previousProof
-  // );
-
-  const proof = await MessageVerificationProgram.verifyMessage(
+  const proof = await MessageVerificationProgram.verifyMessageWithPrevious(
     publicInput,
-    privateInput
+    privateInput,
+    previousProof
   );
 
   return proof;

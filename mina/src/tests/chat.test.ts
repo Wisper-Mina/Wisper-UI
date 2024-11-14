@@ -5,6 +5,7 @@ import { MessagePackage } from '../interfaces/MessagePackage.interface';
 import { encrypt, decrypt } from '../encryption/aes-gcm';
 import {
   generateProof,
+  generateProofWithPreviousProof,
   // generateProofWithPreviousProof,
 } from '../proof/generateProof';
 import { MessageVerificationProgram } from '../proof/proof';
@@ -112,20 +113,13 @@ describe('Chat functions', () => {
     const messageSignatureFields = messageSignature.toFields();
     merkleTree.setLeaf(1n, Poseidon.hash(messageSignatureFields));
     const messageIndex = 1;
-    // const newProof = await generateProofWithPreviousProof(
-    //   signingPublicKey2,
-    //   messageHash,
-    //   messageSignature,
-    //   merkleTree,
-    //   messageIndex,
-    //   messagePackage.proof
-    // );
-    const newProof = await generateProof(
+    const newProof = await generateProofWithPreviousProof(
       signingPublicKey2,
       messageHash,
       messageSignature,
       merkleTree,
-      messageIndex
+      messageIndex,
+      messagePackage.proof
     );
     messagePackage2 = {
       encryptedMessage: encryptedMessage,
