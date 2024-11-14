@@ -17,8 +17,8 @@ export const ChatInput = ({
   chat_id,
   signingPrivateKey58,
   receiverPubKey58,
-}: // lengthOfMessage,
-{
+  lengthOfMessage,
+}: {
   chatWith: string | null;
   chat_id: string;
   signingPrivateKey58: string;
@@ -53,7 +53,7 @@ export const ChatInput = ({
       signingPrivateKey,
       pureMessage: message,
       receiverPublicKey,
-      messageIndex: 0, // TODO: Implement message index
+      messageIndex: lengthOfMessage,
     });
     //TODO: add loading state
     console.log("respProof", respProof);
@@ -132,7 +132,7 @@ export const ChatInput = ({
         }`}
       >
         {isGeneratingProof ? (
-          <div className="w-4 h-4 border-b border-t border-r border-white rounded-full animate-spin"></div>
+          <div className="w-4 h-4 border-b border-t border-r dark:border-black border-white rounded-full animate-spin"></div>
         ) : (
           <UpIcon theme={theme} />
         )}

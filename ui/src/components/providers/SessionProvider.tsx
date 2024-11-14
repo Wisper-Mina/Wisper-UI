@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { useParams, useRouter } from "next/navigation";
 
@@ -21,9 +21,6 @@ import {
 } from "@/redux/slices/chat/slice";
 import { SignedResponse } from "@/types/auro";
 import { checkSignature } from "@/utils/checkSignature";
-import ZkProgramWorkerClient from "@/lib/zkProgramWorkerClient";
-import { timeout } from "@/utils/timeout";
-import { setZkProgram } from "@/redux/slices/zkApp/slice";
 import { PrivateKey, PublicKey } from "o1js";
 
 export const SessionProvider = ({
@@ -35,8 +32,6 @@ export const SessionProvider = ({
   const { chats } = useAppSelector((state) => state.chat);
 
   const router = useRouter();
-
-  const [loadingCLient, setLoadingClient] = useState<boolean>(false);
 
   const publicKey58 = useAppSelector((state) => state.session.publicKeyBase58);
 
@@ -51,6 +46,8 @@ export const SessionProvider = ({
     const offlineChats = chats
       .filter((chat) => !chat.receiperOnline)
       .map((chat) => chat.id);
+
+    console.log("offlineChats", offlineChats);
     dispatch(
       terminateChats({
         offlineChats,
@@ -226,14 +223,13 @@ export const SessionProvider = ({
       return;
     }
     const handleMessage = async (data: any) => {
-      console.log("receive message", data);
       let unRead = false;
       if (!params || !params.chat_id || params.chat_id !== data?.chatId) {
         unRead = true;
       }
+
       if (data?.receiverPk === publicKey58) {
         const messagingChat = chats.find((chat) => chat.id === data?.chatId);
-
         if (!messagingChat) {
           return;
         }
@@ -243,7 +239,6 @@ export const SessionProvider = ({
         const signingPrivateKey = PrivateKey.fromBase58(
           messagingChat?.senderPrivateKey
         );
-        console.log("decrypting message");
         const pureMessage = await zkProgram.decryptMessage({
           encryptedMessage: data?.message?.encryptedMessage,
           receiverPublicKey,
@@ -267,7 +262,7 @@ export const SessionProvider = ({
       socket.off("receive message", handleMessage);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, publicKey58, zkProgram]);
+  }, [socket, publicKey58, zkProgram, chats]);
 
   // set public key
   useEffect(() => {
@@ -287,42 +282,5 @@ export const SessionProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      setLoadingClient(true);
-      console.log("Starting processing...");
-
-      const zkProgramClient = new ZkProgramWorkerClient();
-
-      await timeout(5);
-      console.log("Setting active instance to devnet...");
-
-      await zkProgramClient.setActiveInstanceToDevnet();
-      console.log("Loading program...");
-      await zkProgramClient.loadProgram();
-
-      console.log("Compiling program...");
-      await zkProgramClient.compileProgram();
-
-      console.log("Program loaded and compiled.");
-      dispatch(
-        setZkProgram({
-          zkProgram: zkProgramClient,
-        })
-      );
-      setLoadingClient(false);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return (
-    <>
-      {loadingCLient && (
-        <div className="fixed z-50 pointer-events-none bg-black bg-opacity-60 inset-0 flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full border-t-[4px] border-b-[4px] border-r-[4px] border-white animate-spin"></div>
-        </div>
-      )}
-      {children}
-    </>
-  );
+  return children;
 };

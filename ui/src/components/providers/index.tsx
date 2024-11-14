@@ -8,6 +8,7 @@ import { SessionProvider } from "./SessionProvider";
 import { Overlay } from "./Overlay";
 import { ModalLayout } from "../modals/ModalLayout";
 import { Toaster } from "react-hot-toast";
+import { ZkAppProvider } from "./ZkAppProvider";
 
 const MainProvider = ({
   children,
@@ -24,11 +25,13 @@ const MainProvider = ({
     <NextThemesProvider attribute="class" defaultTheme="dark">
       <Provider store={store}>
         <Toaster />
-        <SessionProvider publicKey={publicKey}>
-          <ModalLayout />
-          <Overlay />
-          {children}
-        </SessionProvider>
+        <ZkAppProvider>
+          <SessionProvider publicKey={publicKey}>
+            <ModalLayout />
+            <Overlay />
+            {children}
+          </SessionProvider>
+        </ZkAppProvider>
       </Provider>
     </NextThemesProvider>
   );

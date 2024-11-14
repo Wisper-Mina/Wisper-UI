@@ -152,7 +152,8 @@ const functions = {
 
     const messageSignatureFields = messageSignature.toFields();
 
-    merkleTree.setLeaf(0n, Poseidon.hash(messageSignatureFields));
+    const leaf = BigInt(args.messageIndex);
+    merkleTree.setLeaf(leaf, Poseidon.hash(messageSignatureFields));
 
     const proof = await generateProof(
       signingPublicKey,

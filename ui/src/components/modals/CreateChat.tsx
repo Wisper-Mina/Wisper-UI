@@ -22,13 +22,27 @@ import { createNewKP } from "@/utils/createNewKP";
 export const CreateChat = () => {
   const [state, setState] = useState<"create" | "start">("create");
 
+  const chats = useAppSelector((state) => state.chat.chats);
+
   const [chat_id, setChatId] = useState<string>("");
 
   const dispatch = useAppDispatch();
 
+  const checkExistUser = (publicKey: string) => {
+    const existChat = chats.find((chat) => chat.chatWith === publicKey);
+
+    if (existChat && existChat.type === "active") {
+      toast.error("Chat already exists", {
+        position: "top-right",
+      });
+      return true;
+    }
+  };
+
   const { publicKeyBase58 } = useAppSelector((state) => state.session);
   const createChat = async (receipientPublicKey: string) => {
-    if (!publicKeyBase58) return;
+    if (!publicKeyBase58) return; // should not happen
+    if (checkExistUser(receipientPublicKey)) return; // should not happen
     if (isValidMinaAddress(receipientPublicKey)) {
       createNewKP().then((res) => {
         if (!res) {
