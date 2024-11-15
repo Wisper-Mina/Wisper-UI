@@ -17,7 +17,8 @@ const ChatMobile = ({ chat }: { chat: ChatType }) => {
     if (!!chat?.chatWith) {
       dispatch(clearUnReadMessages({ chatWith: chat.chatWith }));
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chat?.chatWith]);
 
   if (isSettingsOpen) {
     return (

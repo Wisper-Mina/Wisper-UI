@@ -6,7 +6,24 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  headers: async () => {
+  webpack(config, { isServer }) {
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        o1js: path.resolve(__dirname, "node_modules/o1js/dist/web/index.js"),
+      };
+      config.optimization.minimizer = [];
+    } else {
+      config.externals.push("o1js"); // https://nextjs.org/docs/app/api-reference/next-config-js/serverExternalPackages
+    }
+    config.experiments = {
+      ...config.experiments,
+      topLevelAwait: true,
+      asyncWebAssembly: true,
+    };
+    return config;
+  },
+  async headers() {
     return [
       {
         source: "/(.*)",
@@ -23,21 +40,6 @@ const nextConfig = {
       },
     ];
   },
-
-  webpack(config, { isServer }) {
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        o1js: path.resolve(__dirname, "node_modules/o1js/dist/web/index.js"),
-      };
-      config.optimization.minimizer = [];
-    } else {
-      config.externals.push("o1js"); // https://nextjs.org/docs/app/api-reference/next-config-js/serverExternalPackages
-    }
-    config.experiments = { ...config.experiments, topLevelAwait: true };
-    return config;
-  },
-
   images: {
     unoptimized: true,
   },
