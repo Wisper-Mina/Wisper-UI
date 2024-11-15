@@ -7,6 +7,11 @@ WORKDIR /app
 COPY ./mina /app/mina
 COPY ./ui /app/ui
 
+WORKDIR /app/mina
+RUN npm install
+
+RUN npm run build
+
 # ui klasörüne geçin ve bağımlılıkları yükleyin
 WORKDIR /app/ui
 
