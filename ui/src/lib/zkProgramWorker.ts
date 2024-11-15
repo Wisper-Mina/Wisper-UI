@@ -231,6 +231,10 @@ const functions = {
   },
 };
 
+if (!self.crossOriginIsolated) {
+  console.error("Cross-Origin Isolation is not enabled. Worker might fail.");
+}
+
 // ---------------------------------------------------------------------------------------
 
 export type WorkerFunctions = keyof typeof functions;

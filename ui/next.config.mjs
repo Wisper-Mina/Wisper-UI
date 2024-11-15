@@ -1,28 +1,31 @@
-import path from "node:path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import path from "path";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // productionBrowserSourceMaps: true,
   reactStrictMode: false,
   webpack(config, { isServer }) {
     if (!isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,
-        o1js: path.resolve(__dirname, "node_modules/o1js/dist/web/index.js"),
+        o1js: path.resolve(
+          import.meta.dirname,
+          "../../node_modules/o1js/dist/web/index.js"
+        ),
       };
-      config.optimization.minimizer = [];
+
+      config.optimization.minimize = false;
     } else {
       config.externals.push("o1js"); // https://nextjs.org/docs/app/api-reference/next-config-js/serverExternalPackages
     }
-    config.experiments = {
-      ...config.experiments,
-      topLevelAwait: true,
-      asyncWebAssembly: true,
+    config.experiments = { ...config.experiments, topLevelAwait: true };
+    config.resolve.extensionAlias = {
+      ".js": [".ts", ".js"],
     };
     return config;
   },
+  // To enable o1js for the web, we must set the COOP and COEP headers.
+  // See here for more information: https://docs.minaprotocol.com/zkapps/how-to-write-a-zkapp-ui#enabling-coop-and-coep-headers
   async headers() {
     return [
       {
@@ -39,9 +42,6 @@ const nextConfig = {
         ],
       },
     ];
-  },
-  images: {
-    unoptimized: true,
   },
 };
 
