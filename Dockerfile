@@ -14,10 +14,10 @@ RUN npm install
 
 
 # Uygulamayı build edin
-# RUN npm run build
+RUN npm run build
 
 # Port 3000'i expose edin
 EXPOSE 3000
 
 # Uygulamayı başlatın
-CMD ["npm", "run" , "dev"]
+CMD ["npm" , "start"]
