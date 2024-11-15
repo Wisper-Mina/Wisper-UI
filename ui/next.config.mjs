@@ -25,13 +25,16 @@ const nextConfig = {
   },
 
   webpack(config, { isServer }) {
-    if (isServer === false) {
+    if (!isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,
         o1js: path.resolve(__dirname, "node_modules/o1js/dist/web/index.js"),
       };
       config.optimization.minimizer = [];
+    } else {
+      config.externals.push("o1js"); // https://nextjs.org/docs/app/api-reference/next-config-js/serverExternalPackages
     }
+    config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
   },
 
