@@ -13,12 +13,12 @@ import {
 } from "o1js";
 import * as crypto from "crypto";
 
-import { MessageVerificationProgram } from "../../../mina/build/src/proof/proof.js";
-import { CryptoUtils } from "../../../mina/build/src/ecdh-pallas/ecdh-pallas.js";
 import {
+  MessageVerificationProgram,
+  CryptoUtils,
   generateProof,
   generateProofWithPreviousProof,
-} from "../../../mina/build/src/proof/generateProof.js";
+} from "wisper-mina-contracts";
 
 class MessageVerificationProgramProof extends ZkProgram.Proof(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
