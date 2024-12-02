@@ -55,8 +55,8 @@ describe('Chat functions', () => {
       signingPrivateKey1,
       messageHash.toFields()
     );
-    const messageSignatureFields = messageSignature.toFields();
-    merkleTree.setLeaf(0n, Poseidon.hash(messageSignatureFields));
+    // const messageSignatureFields = messageSignature.toFields();
+    merkleTree.setLeaf(0n, messageHash);
     const messageIndex = 0;
     const proof = await generateProof(
       signingPublicKey1,
@@ -110,8 +110,8 @@ describe('Chat functions', () => {
       signingPrivateKey2,
       messageHash.toFields()
     );
-    const messageSignatureFields = messageSignature.toFields();
-    merkleTree.setLeaf(1n, Poseidon.hash(messageSignatureFields));
+    // const messageSignatureFields = messageSignature.toFields();
+    merkleTree.setLeaf(1n, messageHash);
     const messageIndex = 1;
     const newProof = await generateProofWithPreviousProof(
       signingPublicKey2,

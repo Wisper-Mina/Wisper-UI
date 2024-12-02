@@ -41,12 +41,15 @@ export const MessageVerificationProgram = ZkProgram({
         );
         isSignatureValid.assertTrue();
 
-        // Convert signature to field elements
-        const messageSignatureFields = privateInput.messageSignature.toFields();
+        // // Convert signature to field elements
+        // const messageSignatureFields = privateInput.messageSignature.toFields();
 
-        // Verify the Merkle path
+        // // Verify the Merkle path
+        // const calculatedRoot = privateInput.merklePath.calculateRoot(
+        //   Poseidon.hash(messageSignatureFields)
+        // );
         const calculatedRoot = privateInput.merklePath.calculateRoot(
-          Poseidon.hash(messageSignatureFields)
+          publicInput.messageHash
         );
         calculatedRoot.assertEquals(publicInput.merkleRoot);
       },
@@ -70,12 +73,15 @@ export const MessageVerificationProgram = ZkProgram({
         );
         isSignatureValid.assertTrue();
 
-        // Convert signature to field elements
-        const messageSignatureFields = privateInput.messageSignature.toFields();
+        // // Convert signature to field elements
+        // const messageSignatureFields = privateInput.messageSignature.toFields();
 
-        // Verify the Merkle path
+        // // Verify the Merkle path
+        // const calculatedRoot = privateInput.merklePath.calculateRoot(
+        //   Poseidon.hash(messageSignatureFields)
+        // );
         const calculatedRoot = privateInput.merklePath.calculateRoot(
-          Poseidon.hash(messageSignatureFields)
+          publicInput.messageHash
         );
         calculatedRoot.assertEquals(publicInput.merkleRoot);
       },

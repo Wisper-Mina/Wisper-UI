@@ -19,10 +19,10 @@ describe('Proof generation', () => {
       senderPrivateKey,
       messageHash.toFields()
     );
-    const messageSignatureFields = messageSignature.toFields();
+    // const messageSignatureFields = messageSignature.toFields();
 
     const merkleTree = new MerkleTree(MERKLE_TREE_HEIGHT);
-    merkleTree.setLeaf(0n, Poseidon.hash(messageSignatureFields));
+    merkleTree.setLeaf(0n, messageHash);
 
     const messageCounter = 0;
 
